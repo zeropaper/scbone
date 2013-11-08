@@ -1,32 +1,57 @@
 (function(factory) {
   'use strict';
-  /* global define: true, module: true */
+  /* global module: true, define: true */
   // CommonJS
   if(typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'));
+    module.exports = factory();
   }
   // AMD
   else if(typeof define === 'function' && define.amd) {
-    define([
-      'underscore',
-      'backbone'
-    ], factory);
+    define([], factory);
   }
-}(function(_, Backbone, scMixins) {
+}(function() {
+  'use strict';
+  var noop = function(){};
 
+  function localSync(scope) {
+    return function(method, model, options) {
+      var success = options.success || noop;
+      var error = options.error || noop;
+      
+      var id = scope +':';
+      id = id + (model.id ? model.id : '#'+ model.cid);
 
+      switch (method) {
+        case 'create':
+        case 'update':
+        case 'patch':
+          localStorage.setItem(id, JSON.stringify(model.toJSON()));
+          break;
+        case 'read':
+          success(JSON.parse(localStorage.getItem(id)));
+          break;
+        case 'delete':
+
+          break;
+      }
+    };
+  }
 
 
   function fetch(options) {
     options       = options || {};
+    /*jshint validthis:true */
     var instance  = this;
-    var success   = options.success || function() {};
-    var error     = options.error || function() {};
+    var success   = options.success || noop;
+    var error     = options.error || noop;
+    var permalink = (instance.get('permalink') || instance.id);
+    console.info('permalink for fetching', permalink, instance.toJSON());
 
-    var apiPath = '/'+ _.result(this, 'url') +'/'+ (instance.get('username') || instance.id);
+    var apiPath   = '/'+ _.result(instance, 'url') +'/'+ permalink;
     if (!options.subresource) {
       SC.get(apiPath, function(data, info) {
         instance.set(data);
+        success.call(instance, data, info);
       });
       return;
     }
@@ -39,11 +64,11 @@
       throw new Error('No subresource found for'+ options.subresource);
     }
 
-    require([subresource], function(_Class) {
+    require([subresource], function(Klass) {
       var subinstance = instance[options.subresource];
 
       if (!subinstance) {
-        subinstance = instance[options.subresource] = new _Class();
+        subinstance = instance[options.subresource] = new Klass();
 
         instance.listenTo(subinstance, 'change', function() {
           instance.trigger('change:'+ options.subresource, instance, {
@@ -61,12 +86,26 @@
           silent: true
         });
         subinstance.trigger('change', subinstance, {});
+
+        success.call(instance, data, info);
       });
     }, error);
   }
 
+
+  // function save(attributes, options) {
+  //   options       = options || {};
+  //   var instance  = this;
+  //   var success   = options.success || noop;
+  //   var error     = options.error || noop;
+
+  //   var apiPath = '/'+ _.result(this, 'url') +'/'+ (this.get('username') || this.id);
+
+  // }
+
   var mixins = {
-    fetch: fetch
+    fetch: fetch,
+    localSync: localSync
   };
   return mixins;
 }));
