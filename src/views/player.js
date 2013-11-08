@@ -24,7 +24,8 @@
       'click .prev':            'previousTrack',
       'click .next':            'nextTrack',
       'click .tracks .title':   'playTrack',
-      'click .modal .underlay': 'modalClose'
+      'click .modal .underlay': 'modalClose',
+      'click .tracks likes':    'like'
     },
 
     initialize: function(options) {
@@ -91,7 +92,9 @@
           });
         });
 
-        view.renderTrack().render();
+        view
+          // .renderTrack()
+          .render();
       });
 
       view.$el.html(templates['SCBone/player']({
@@ -294,44 +297,68 @@
       return this;
     },
 
-    render: function() {
-      console.info('render player');
+    render: function(options) {
+      options = options || {};
       var model = this.getCurrent();
 
       this.$('.controls').html(templates['SCBone/controls']({
         currentTrack: model ? model.toJSON() : {},
         routePrefix: this.router.routePrefix
       }));
+      this.drawProgress();
 
-      return this.drawProgress();
+      if (options.scope && _.isFunction(this[options.scope +'Render'])) {
+        // console.info('options.scope', options.scope);
+        this[options.scope +'Render'](options);
+      }
+      
+      return this;
     },
 
-    renderTracks: function() {
+    tracksRender: function(options) {
+      options = options || {};
       var view = this;
-
-      var tracks = view.collection.map(function(track, t) {
+      
+      var collection = options.collection || view.collection;
+      var tracks = collection.map(function(track, t) {
         var data = track.toJSON();
         data.routePrefix = view.router.routePrefix;
         return templates['SCBone/trackItem'](data);
       });
-      view.$('.tracks').html('<ol>'+ tracks.join('') +'</ol>');
+      view.$('.tracks ul').html(tracks.join(''));
 
       return view;
     },
 
-    renderTrack: function() {
+    usersRender: function(options) {
+      options = options || {};
       var view = this;
-      var track = view.getCurrent();
-      var html = '';
-      var data = {};
-      if (track) {
-        data = track.toJSON();
-        data.routePrefix = view.router.routePrefix;
-        html = templates['SCBone/track'](data);
+
+      if (options.collection) {
+        var users = options.collection.map(function(user, t) {
+          var data = user.toJSON();
+          data.routePrefix = view.router.routePrefix;
+          return templates['SCBone/userItem'](data);
+        });
+        view.$('.users ul').html(users.join(''));
       }
-      view.$('.details').html(html);
+
       return view;
     },
+
+    //  renderTrack: function() {
+    //   var view = this;
+    //   var track = view.getCurrent();
+    //   var html = '';
+    //   var data = {};
+    //   if (track) {
+    //     data = track.toJSON();
+    //     data.routePrefix = view.router.routePrefix;
+    //     html = templates['SCBone/track'](data);
+    //   }
+    //   view.$('.details').html(html);
+    //   return view;
+    // },
 
     modal: function(content) {
       this.$modal = this.$('.modal');

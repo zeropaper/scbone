@@ -23,24 +23,41 @@
       './templates',
       './collections/users',
       './collections/tracks',
+      './collections/local-playlist',
       './views/profile',
       './views/player'
     ], factory);
   }
-}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, SCProfile, SCPlayer) {
+  // Browser
+  else if (typeof _ !== 'undefined' && typeof Backbone !== 'undefined') {
+    window.SCBone = factory(_, Backbone);
+  }
+}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, LocalPlaylist, SCProfile, SCPlayer) {
   var connected;
   var $ = Backbone.$;
   var SCUser = SCUsers.prototype.model;
   var SCTrack = SCTracks.prototype.model;
+
+  function scAccessToken(value) {
+    if (value) {
+      localStorage.setItem('scbone-access-token', value);
+    }
+    var val = localStorage.getItem('scbone-access-token');
+    console.info('scAccessToken', value, val);
+    return val;
+  }
+
+  var scopes = 'track user comment group followers followings tracks users comments groups';
 
   var SCBone = Backbone.Router.extend({
     routePrefix: 'step/sounds',
 
     routes: {
       '':                               'appStart',
-      'user/:username(/:subresource)':  'guestAction',
+      'users/:id(/:subresource)':       'guestAction',
       'host/:subresource':              'hostAction',
-      'track/:id':                      'playTrack'
+      'tracks/:id':                     'playTrack',
+      'connect':                        'scConnect'
     },
 
     appStart: function() {
@@ -64,50 +81,108 @@
       }
     },
 
+
+
     hostAction: function(subresource) {
-      // console.info('SC router host', this.host.get('username'), subresource);
-      this.host.fetch({subresource: subresource});
+      console.info('SC router host', this.host.get('username'), subresource);
+      if (subresource === 'favorites' || subresource === 'tracks') {
+
+      }
+      this.host.fetch({
+        subresource: subresource
+      });
     },
     
-    guestAction: function(username, subresource) {
-      // console.info('SC router guest', username, subresource);
-      if (this.guest) {
-        this.guest.fetch({subresource: subresource});
+    guestAction: function(id, subresource) {
+      console.info('SC router guest', id, subresource);
+      var user = this.guest;
+    
+
+      if (user.id !== id) {
+        user.attributes = {};
+        // user.set('id', id);
+        user.attributes[user.idAttribute] = id;
+        user.id = id;
+
+        user.fetch({
+          success: function() {
+            console.info('guest user loaded', user);
+            if (subresource) {
+              user.fetch({
+                subresource: subresource
+              });
+            }
+          }
+        });
       }
+      else if(subresource) {
+        user.fetch({
+          subresource: subresource
+        });
+      }
+
     },
 
     scConnect: function() {
       var router = this;
-      // console.info('connecting to SoundCloud', !!connected);
+      console.info('connecting to SoundCloud', !!connected);
       if (connected) {
         return;
       }
       connected = true;
 
-      SC.connect(function() {
-        SC.get('/me', function(info) {
-          // console.info('connected', info.username);
-          router.guest.set(router.host.toJSON());
-          router.host.set(info);
-
-          router.host.once('change:favorites', function() {
-            router.player.collection.set(router.host.favorites.toJSON());
-            router.player.collection.setCurrent(0);
-            router.player.renderTracks();
-          });
-
-          router.host.fetch({
-            subresource: 'favorites'
-          });
-
-          router.player.render();
+      var accessToken = scAccessToken();
+      if (accessToken) {
+        SC.accessToken(accessToken);
+        router.scConnected();
+      }
+      else {
+        SC.connect(function() {
+          scAccessToken(SC.accessToken());
+          router.scConnected();
         });
+      }
+    },
+
+    scConnected: function() {
+      var router = this;
+
+      SC.get('/me', function(info) {
+        console.info('connected', info.username);
+
+        router.guest.set(router.host.toJSON());
+        router.host.set(info);
+
+        router.host.once('change:favorites', function() {
+          router.player.collection.set(router.host.favorites.toJSON());
+          router.player.collection.setCurrent(0);
+          router.player.tracksRender();
+        });
+
+        router.host.fetch({
+          subresource: 'favorites'
+        });
+
+        router.player.render();
       });
+    },
+
+    scIsConnected: function() {
+      return !!scAccessToken();
+    },
+
+    setScope: function(scope) {
+      this.$el.removeClass(scopes);
+      if (scope) {
+        this.$el.addClass(scope);
+      }
+      return this;
     },
 
     initialize: function(options) {
       var router = this;
       router.el = options.el;
+      router.$el = $(router.el);
       router.routePrefix = options.routePrefix;
 
       var linksSelector = '[href^="/"]';
@@ -136,9 +211,12 @@
         client_id:    options.clientid,
         redirect_uri: options.callbackurl,
       });
+
+      router.localPlaylist = new LocalPlaylist([], {
+      });
       
       router.host = new SCUser({
-        username: options.hostusername
+        permalink: options.hostpermalink
       });
 
 
@@ -146,30 +224,78 @@
         routePrefix: router.routePrefix
       });
       router.profile = new SCProfile({
-        model:  router.host,
-        el:     $('.host-sc-profile', options.el)[0],
-        router: router
+        model:      router.host,
+        el:         $('.host-sc-profile', options.el)[0],
+        router:     router
       });
       router.profile.render();
 
       router.player = new SCPlayer({
         el:         $('.player', options.el)[0],
-        collection: new SCTracks([], {
-          parentresource: router.host
-        }),
-        router: router
+        collection: router.localPlaylist,
+        router:     router
       });
       router.player.render();
 
       router.host.on('change', function(inst, info) {
-        if (info.subresource && router.host[info.subresource]) {
-          console.info('SC host model "'+ info.subresource +'" subresource changed');
-          if (info.subresource === 'favorites' || info.subresource === 'tracks') {
-            console.info('render tracks');
-            router.player.collection.set(router.host[info.subresource].toJSON());
-            router.player.render().renderTracks();
-          }
+        info = info || {};
+        var scope;
+        var name = info.subresource;
+        if (
+          name === 'favorites' ||
+          name === 'tracks'
+        ) {
+          scope = 'tracks';
+          
+          router
+            .player
+              .collection
+                .set(router.host[info.subresource].toJSON());
+          
+          router
+            .player
+              .render({
+                scope: scope
+              });
         }
+        router.setScope(scope);
+
+
+        // if (!name) {
+        //   scope = false;
+        // }
+        // else if (
+        //   name === 'favorites' ||
+        //   name === 'tracks'
+        // ) {
+        //   scope = 'tracks';  
+        // }
+        // else if (
+        //   name === 'followers' ||
+        //   name === 'followings'
+        // ) {
+        //   scope = 'users';  
+        // }
+        // else {
+        //   scope = name;
+        // }
+
+        // if (scope && router.host[name]) {
+        //   console.info('SC host model "'+ name +'" ('+ scope +') subresource changed');
+        //   if (scope === 'tracks') {
+        //     router.player
+        //       .collection.set(router.host[info.subresource].toJSON());
+        //     router.player.render({
+        //       scope: scope
+        //     });
+        //   }
+        //   else {
+        //     router.player.render({
+        //       scope: scope,
+        //       collection: 
+        //     });
+        //   }
+        // }
       });
 
       router.host.fetch({});
@@ -179,17 +305,16 @@
   },
   {
     Models: {
-      User:     SCUser,
-      Track:    SCTrack
+      User:           SCUser,
+      Track:          SCTrack
     },
     Collections: {
-      User:     SCUsers,
-      Track:    SCTracks
+      User:           SCUsers,
+      Track:          SCTracks,
+      LocalPlaylist:  LocalPlaylist
     },
     Views: {
-      // Track:    SCTracks.Views.Track,
-      // Tracks:   SCTracks,
-      Profile:  SCProfile
+      Profile:        SCProfile
     }
   });
 

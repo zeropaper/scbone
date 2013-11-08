@@ -28,34 +28,63 @@
       '<div class="info">',
         '<a href="<%- prefix %>host" class="username"><%- host.username %></a>',
         '<span class="full-name"><%- host.full_name %></span>',
+        
+        '<span class="city"><%- host.city %></span><%= (host.country && host.city ? "," : "") %>',
+        '<span class="country"><%- host.country %></span>',
       '</div>',
-
-      // '<div class="need-auth">',
-      //   '<div class="unauth">',
-      //     '<a class="sc-connect">Connect</a> with Soundcloud for more functionnalities.',
-      //   '</div>',
-
-      //   '<div class="actions auth">',
-      //     '<div class="like"><i class="icon-heart<%- (false ? "" : "-empty") %>"></i></div>',
-      //   '</div>',
-      // '</div>',
 
     '</div>',
 
     '<ul class="subresources">',
-    '<% _.each({',
 
-      'favorites:   "Likes",',
-      // 'playlists:   "Sets",',
-      'tracks:      "Tracks",',
-      'followers:   "Followers",',
-      'followings:  "Followings",',
-      'groups:      "Groups",',
-      'comments:    "Comments"',
+      '<li>',
+        '<a href="<%- prefix %>host/favorites">',
+          '<i class="icon-heart"></i>',
+          '<span><%- (host.public_favorites_count || "") %></span>',
+          'Likes',
+        '</a>',
+      '</li>',
+  
+      '<li>',
+        '<a href="<%- prefix %>host/tracks">',
+          '<i class="icon-mic"></i>',
+          '<span><%- (host.track_count || 0) %></span>',
+          'Tracks',
+        '</a>',
+      '</li>',
+  
+      '<li>',
+        '<a href="<%- prefix %>host/followings">',
+          '<i class="icon-angle-left"></i>',
+          '<span><%- (host.followings_count || 0) %></span>',
+          'Followings',
+        '</a>',
+      '</li>',
 
-    '}, function(title, path) { %>',
-      '<li><a href="<%- prefix %>host/<%- path %>"><%- title %></a></li>',
-    '<% }); %>',
+      '<li>',
+        '<a href="<%- prefix %>host/followers">',
+          '<i class="icon-angle-right"></i>',
+          '<span><%- (host.followers_count || 0) %></span>',
+          'Followers',
+        '</a>',
+      '</li>',
+
+      // '<li>',
+      //   '<a href="<%- prefix %>host/comments">',
+      //     '<i class="icon-comment"></i>',
+      //     '<span><%- (host.comments_count || 0) %></span>',
+      //     'Comments',
+      //   '</a>',
+      // '</li>',
+
+      // '<li>',
+      //   '<a href="<%- prefix %>host/groups">',
+      //     '<i class="icon-users"></i>',
+      //     '<span><%- (host.groups_count || 0) %></span>',
+      //     'Groups',
+      //   '</a>',
+      // '</li>',
+
     '</ul>',
 
     '<div class="description"><%- host.description %></div>',
@@ -83,7 +112,10 @@
       '<a class="soundcloud" href="http://soundcloud.com" title="powered by Soundcloud">powered by Soundcloud</a>',
     '</div>',
     
-    '<section class="tracks"></section>',
+    // '<section class="list users"><ul></ul></section>',
+    // '<section class="list comments"><ul></ul></section>',
+    // '<section class="list groups"><ul></ul></section>',
+    '<section class="list tracks"><ul></ul></section>',
     ''
   ].join('\n'));
 
@@ -100,6 +132,52 @@
 
   templates['SCBone/trackItem'] = _.template([
     '',
+    '<%',
+    'var prefix = "#"+ (routePrefix ? routePrefix +"/" : "");',
+    'var likes = (typeof favoritings_count !== "undefined" ? favoritings_count : 0);',
+    'var user_liked = (typeof user_favorite !== "undefined" && user_favorite);',
+    '%>',
+
+    '<li<%= (artwork_url ? "" : " class=\\"no-artwork\\"") %>>',
+      '<% if(artwork_url) { %>',
+      '<img class="artwork" src="<%- artwork_url %>">',
+      '<% } %>',
+
+      '<div class="track-info <%- sharing %>">',
+        '<div class="title">',
+          '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
+        '</div>',
+        
+        '<span class="duration">',
+          '<i class="icon-clock"></i>',
+          '<%- moment(duration).format("m:s") %>',
+        '</span>',
+
+        
+        '<span class="likes"',
+        '<%= (user_liked ? " title=\\"You liked it.\\"" : "") %>',
+        '>',
+          '<i class="icon-heart<%- (user_liked ? "" : "-empty") %>"></i>',
+          '<%- likes %>',
+        '</span>',
+
+        '<a href="<%- prefix %>users/<%- user.permalink %>" class="username">',
+        '<%- user.username %>',
+        '</a>',
+
+        '<% if (sharing === "private") { %>',
+        '<% } %>',
+        // '<span class="user">',
+        //   '<span class="full-name"><%- user.full_name %></span>',
+        // '</span>',
+      '</div>',
+
+    '</li>',
+    ''
+  ].join('\n'));
+
+  templates['SCBone/userItem'] = _.template([
+    '',
     '<% var prefix = "#"+ (routePrefix ? routePrefix +"/" : ""); %>',
 
     '<li<%= (artwork_url ? "" : " class=\\"no-artwork\\"") %>>',
@@ -109,7 +187,7 @@
 
       '<div class="track-info">',
         '<div class="title">',
-          '<a href="<%- prefix %>track/<%- id %>"><%- title %></a>',
+          '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
         '</div>',
         
         '<span class="duration">',
@@ -121,7 +199,7 @@
         '<span class="favorited"><%- favoritings_count %></span>',
         '<% } %>',
 
-        '<a href="<%- prefix %>users/<%- user.id %>" class="username">',
+        '<a href="<%- prefix %>users/<%- user.permalink %>" class="username">',
         '<%- user.username %>',
         '</a>',
         // '<span class="user">',
@@ -138,20 +216,20 @@
 
     // '<section>',
       '<header>',
-        '<a href="<%- prefix %>track/<%- id %>" class="title"><%- title %></a>',
+        '<a href="<%- prefix %>tracks/<%- id %>" class="title"><%- title %></a>',
         
         '<span class="duration"><i class="icon-clock"></i><%- moment(duration).format("m:s") %></span>',
         
         '<span class="likes"><i class="icon-heart"></i><%- favoritings_count %></span>',
         
         '<span class="user">',
-          '<a href="<%- prefix %>users/<%- user.id %>" class="username"><%- user.username %></a>',
+          '<a href="<%- prefix %>users/<%- user.permalink %>" class="username"><%- user.username %></a>',
           '<span class="full-name"><%- user.full_name %></span>',
         '</span>',
         
         '<% if (typeof label !== "undefined") { %>',
         '<span class="label">',
-          '<a href="<%- prefix %>users/<%- label.id %>" class="username"><%- label.username %></a>',
+          '<a href="<%- prefix %>users/<%- label.permalink %>" class="username"><%- label.username %></a>',
           '<span class="full-name"><%- label.full_name %></span>',
         '</span>',
         '<% } %>',
