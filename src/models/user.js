@@ -16,11 +16,11 @@
     url: 'users'
   }, {
     subresources: {
-      comments:   'apps/soundcloud/collections/comments',
-      favorites:  'apps/soundcloud/collections/tracks',
-      tracks:     'apps/soundcloud/collections/tracks',
-      followings: 'apps/soundcloud/collections/users',
-      followers:  'apps/soundcloud/collections/users'
+      comments:   'collections/comments',
+      favorites:  'collections/tracks',
+      tracks:     'collections/tracks',
+      followings: 'collections/users',
+      followers:  'collections/users'
     }
   });
 

@@ -16,9 +16,9 @@
     url: 'tracks'
   }, {
     subresources: {
-      user:       'apps/soundcloud/models/user',
-      favoriters: 'apps/soundcloud/collections/users',
-      comments:   'apps/soundcloud/collections/comments'
+      user:       'models/user',
+      favoriters: 'collections/users',
+      comments:   'collections/comments'
     }
   });
 

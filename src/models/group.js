@@ -16,11 +16,11 @@
     url: 'groups'
   }, {
     subresources: {
-      users:          'apps/soundcloud/collections/users',
-      moderators:     'apps/soundcloud/collections/users',
-      members:        'apps/soundcloud/collections/users',
-      contributors:   'apps/soundcloud/collections/users',
-      tracks:         'apps/soundcloud/collections/tracks'
+      users:          'collections/users',
+      moderators:     'collections/users',
+      members:        'collections/users',
+      contributors:   'collections/users',
+      tracks:         'collections/tracks'
     }
   });
 
