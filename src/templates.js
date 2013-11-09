@@ -11,6 +11,9 @@
       'underscore'
     ], factory);
   }
+  else if(typeof _ !== 'function') {
+    window.JST = factory(_);
+  }
 }(function(_) {
   'use strict';
 
@@ -38,35 +41,35 @@
     '<ul class="subresources">',
 
       '<li>',
-        '<a href="<%- prefix %>host/favorites">',
+        '<%= (host.public_favorites_count ? "<a href=\\""+ prefix +"host/favorites\\">" : "<div>") %>',
           '<i class="icon-heart"></i>',
           '<span><%- (host.public_favorites_count || "") %></span>',
           'Likes',
-        '</a>',
+        '<%= (host.public_favorites_count ? "</a>" : "</div>") %>',
       '</li>',
   
       '<li>',
-        '<a href="<%- prefix %>host/tracks">',
+        '<%= (host.track_count ? "<a href=\\""+ prefix +"host/tracks\\">" : "<div>") %>',
           '<i class="icon-mic"></i>',
           '<span><%- (host.track_count || 0) %></span>',
           'Tracks',
-        '</a>',
+        '<%= (host.track_count ? "</a>" : "</div>") %>',
       '</li>',
   
       '<li>',
-        '<a href="<%- prefix %>host/followings">',
+        '<%= (host.followings_count ? "<a href=\\""+ prefix +"host/followings\\">" : "<div>") %>',
           '<i class="icon-angle-left"></i>',
           '<span><%- (host.followings_count || 0) %></span>',
           'Followings',
-        '</a>',
+        '<%= (host.followings_count ? "</a>" : "</div>") %>',
       '</li>',
 
       '<li>',
-        '<a href="<%- prefix %>host/followers">',
+        '<%= (host.followers_count ? "<a href=\\""+ prefix +"host/followers\\">" : "<div>") %>',
           '<i class="icon-angle-right"></i>',
           '<span><%- (host.followers_count || 0) %></span>',
           'Followers',
-        '</a>',
+        '<%= (host.followers_count ? "</a>" : "</div>") %>',
       '</li>',
 
       // '<li>',
