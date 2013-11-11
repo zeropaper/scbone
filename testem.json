@@ -1,0 +1,17 @@
+{
+  "framework": "mocha",
+  "test_page": "index.html",
+  "src_files": [],
+  "routes": {
+    "/index.html":          "test/index.html",
+    "/require.js":          "bower_components/requirejs/require.js",
+    "/backbone.js":         "bower_components/backbone/backbone.js",
+    "/underscore.js":       "bower_components/underscore/underscore.js",
+    "/jquery.js":           "bower_components/jquery/jquery.js",
+    "/jquery.scrollto.js":  "bower_components/jquery.scrollTo/jquery.scrollTo.js",
+    "/expect.js":           "node_modules/expect.js/expect.js",
+    "/moment.js":           "bower_components/moment/moment.js",
+    "/tests.js":            "test/tests.js",
+    "/spec":                "test/spec"
+  }
+}
