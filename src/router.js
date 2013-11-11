@@ -11,7 +11,8 @@
       require('./collections/users'),
       require('./collections/tracks'),
       require('./views/profile'),
-      require('./templates/player')
+      require('./templates/player'),
+      require('./templates/user')
     );
   }
   // AMD
@@ -25,14 +26,15 @@
       './collections/tracks',
       './collections/local-playlist',
       './views/profile',
-      './views/player'
+      './views/player',
+      './views/user'
     ], factory);
   }
   // Browser
   else if (typeof _ !== 'undefined' && typeof Backbone !== 'undefined') {
     window.SCBone = factory(_, Backbone);
   }
-}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, LocalPlaylist, SCProfile, SCPlayer) {
+}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, LocalPlaylist, SCProfile, SCPlayer, SCUserView) {
   var connected;
   var $ = Backbone.$;
   var SCUser = SCUsers.prototype.model;
@@ -47,14 +49,14 @@
     return val;
   }
 
-  var scopes = 'track user comment group followers followings tracks users comments groups';
+  var scopes = 'track user comment group followers followings tracks users comments groups host-tracks host-users';
 
   var SCBone = Backbone.Router.extend({
     routePrefix: 'step/sounds',
 
     routes: {
       '':                               'appStart',
-      'users/:id(/:subresource)':       'guestAction',
+      'users/:id(/:subresource)':       'usersAction',
       'host/:subresource':              'hostAction',
       'tracks/:id':                     'playTrack',
       'connect':                        'scConnect'
@@ -93,10 +95,10 @@
       });
     },
     
-    guestAction: function(id, subresource) {
+    usersAction: function(id, subresource) {
       console.info('SC router guest', id, subresource);
       var user = this.guest;
-    
+      this.setScope('user');
 
       if (user.id !== id) {
         user.attributes = {};
@@ -185,6 +187,14 @@
       router.$el = $(router.el);
       router.routePrefix = options.routePrefix;
 
+      if (!options.hostpermalink) {
+        throw new Error('A `hostpermalink` option must be set.');
+      }
+
+      if (!options.el) {
+        throw new Error('A `el` (DOM element) option must be set.');
+      }
+
       var linksSelector = '[href^="/"]';
       if (options.routePrefix) {
         linksSelector = '[href^="'+ options.routePrefix +'"],'+
@@ -237,70 +247,24 @@
       });
       router.player.render();
 
-      router.host.on('change', function(inst, info) {
-        info = info || {};
-        var scope;
-        var name = info.subresource;
-        if (
-          name === 'favorites' ||
-          name === 'tracks'
-        ) {
-          scope = 'tracks';
-          
-          router
-            .player
-              .collection
-                .set(router.host[info.subresource].toJSON());
-          
-          router
-            .player
-              .render({
-                scope: scope
-              });
-        }
-        router.setScope(scope);
-
-
-        // if (!name) {
-        //   scope = false;
-        // }
-        // else if (
-        //   name === 'favorites' ||
-        //   name === 'tracks'
-        // ) {
-        //   scope = 'tracks';  
-        // }
-        // else if (
-        //   name === 'followers' ||
-        //   name === 'followings'
-        // ) {
-        //   scope = 'users';  
-        // }
-        // else {
-        //   scope = name;
-        // }
-
-        // if (scope && router.host[name]) {
-        //   console.info('SC host model "'+ name +'" ('+ scope +') subresource changed');
-        //   if (scope === 'tracks') {
-        //     router.player
-        //       .collection.set(router.host[info.subresource].toJSON());
-        //     router.player.render({
-        //       scope: scope
-        //     });
-        //   }
-        //   else {
-        //     router.player.render({
-        //       scope: scope,
-        //       collection: 
-        //     });
-        //   }
-        // }
+      router.localPlaylist.on('change', function(inst, info) {
+        router
+          .player
+            .render();
       });
+      router.localPlaylist.fetch();
 
       router.host.fetch({});
+      // router.host.fetch({subresource: 'favorites'});
 
       router.guest = new SCUser({});
+
+      router.user = new SCUserView({
+        el:         $('.user', options.el)[0],
+        model:      router.guest,
+        router:     router
+      });
+      router.user.render();
     }
   },
   {
