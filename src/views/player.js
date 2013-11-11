@@ -56,9 +56,14 @@
           .addClass('current')
         ;
 
-        // var localScrollY =  (Math.max(0, index - 1) * 68) +
-        //                     (Math.max(0, index - 1) * 8);
-        // view.$('.tracks').scrollTo(localScrollY);
+        var localScrollY =  (Math.max(0, index - 1) * 46) +
+                            (Math.max(0, index - 1) * 8);
+        if ($.fn.scrollTo) {
+          view.$('.tracks').scrollTo(localScrollY);
+        }
+        else {
+          view.$('.tracks')[0].scrollTop = localScrollY;
+        }
       });
 
       view.on('current-track', function(trackId) {
