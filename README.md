@@ -13,7 +13,7 @@ If somebody find it interesting and want to reuse it, be my guest.
 Demonstration
 -------------
 
-As mentionned, I wrote that for my [personal page](http://irata.ch).
+As mentionned, I wrote that for my [personal page](http://irata.ch) or on the [project page](http://zeropaper.github.io/scbone/).
 
 Use
 ---
