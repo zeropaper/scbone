@@ -95,10 +95,74 @@
     ''
   ].join('\n'));
 
+  templates['SCBone/user'] = _.template([
+    '',
+    '<% var prefix = "#"+ (routePrefix ? routePrefix +"/" : ""); %>',
+
+    '<div class="block-h">',
+
+      '<a href="<%- prefix %>users/<%- permalink %>" class="picture">',
+        '<img src="<%- avatar_url %>" alt="<%- username %>" />',
+      '</a>',
+
+      '<div class="info">',
+        '<a href="<%- prefix %>users/<%- permalink %>" class="username"><%- username %></a>',
+        '<span class="full-name"><%- full_name %></span>',
+        
+        '<span class="city"><%- city %></span><%= (country && city ? "," : "") %>',
+        '<span class="country"><%- country %></span>',
+      '</div>',
+
+    '</div>',
+
+    '<ul class="subresources">',
+
+      '<li>',
+        '<%= (public_favorites_count ? "<a href=\\""+ prefix +"users/"+ permalink +"/favorites\\">" : "<div>") %>',
+          '<i class="icon-heart"></i>',
+          '<span><%- (public_favorites_count || "") %></span>',
+          'Likes',
+        '<%= (public_favorites_count ? "</a>" : "</div>") %>',
+      '</li>',
+  
+      '<li>',
+        '<%= (track_count ? "<a href=\\""+ prefix +"users/"+ permalink +"/tracks\\">" : "<div>") %>',
+          '<i class="icon-mic"></i>',
+          '<span><%- (track_count || 0) %></span>',
+          'Tracks',
+        '<%= (track_count ? "</a>" : "</div>") %>',
+      '</li>',
+  
+      '<li>',
+        '<%= (followings_count ? "<a href=\\""+ prefix +"users/"+ permalink +"/followings\\">" : "<div>") %>',
+          '<i class="icon-angle-left"></i>',
+          '<span><%- (followings_count || 0) %></span>',
+          'Followings',
+        '<%= (followings_count ? "</a>" : "</div>") %>',
+      '</li>',
+
+      '<li>',
+        '<%= (followers_count ? "<a href=\\""+ prefix +"users/"+ permalink +"/followers\\">" : "<div>") %>',
+          '<i class="icon-angle-right"></i>',
+          '<span><%- (followers_count || 0) %></span>',
+          'Followers',
+        '<%= (followers_count ? "</a>" : "</div>") %>',
+      '</li>',
+
+    '</ul>',
+
+    '<div class="description"><%- description %></div>',
+    ''
+  ].join('\n'));
+
   templates['SCBone/app'] = _.template([
     '',
     '<div class="host-sc-profile host"></div>',
-    '<div class="player"></div>',
+    '<div class="scope player"></div>',
+    '<div class="scope user"></div>',
+    '<div class="scope group"></div>',
+    '<div class="scope host-tracks"></div>',
+    '<div class="scope host-users"></div>',
     ''
   ].join('\n'));
 
@@ -258,13 +322,13 @@
   /* global module: true, define: true */
   // CommonJS
   if(typeof exports === 'object') {
-    module.exports = factory();
+    module.exports = factory(require('backbone'));
   }
   // AMD
   else if(typeof define === 'function' && define.amd) {
-    define('mixins',[], factory);
+    define('mixins',['backbone'], factory);
   }
-}(function() {
+}(function(Backbone) {
   
   var noop = function(){};
 
@@ -340,21 +404,45 @@
   // });
   // ```
   function localSync(scope) {
-    return function(method, model, options) {
+    return function(method, instance, options) {
       var success = options.success || noop;
       var error = options.error || noop;
+      var isModel = instance instanceof Backbone.Model;
       
       var id = scope +':';
-      id = id + (model.id ? model.id : '#'+ model.cid);
+      id = id + isModel ? (instance.id ? instance.id : '#'+ instance.cid) : 'keys';
 
       switch (method) {
         case 'create':
         case 'update':
         case 'patch':
-          localStorage.setItem(id, JSON.stringify(model.toJSON()));
+          if (isModel) {
+            localStorage.setItem(id, JSON.stringify(instance.toJSON()));
+          }
+          else {
+            localStorage.setItem(id, _.keys(instance._byId).join(','));
+          }
           break;
         case 'read':
-          success(JSON.parse(localStorage.getItem(id)));
+          if (isModel) {
+            success(JSON.parse(localStorage.getItem(id)));
+          }
+          else {
+            var idAttribute = instance.model.prototype.idAttribute;
+            var ids = (localStorage.getItem(id) || '').split(',');
+            var models = _.compact(_.map(ids, function(mId) {
+              // exclude models who have no ID
+              if (mId && mId.substr(0, 1) !== 'c') {
+                return JSON.parse(localStorage.getItem(scope +':'+ mId));
+              }
+            }));
+
+            instance.reset(models);
+            // instance.each(function(model) {
+            //   model.set({});
+            // });
+            // success();
+          }
           break;
         case 'delete':
 
@@ -585,19 +673,23 @@
   });
 
   var LocalPlaylist = TracksCollection.extend({
+    sync: mixins ? mixins.localSync('local-playlist') : noop,
     model: LocalTrackModel,
-    saveOrder: function() {
-      if (mixins) {
-        localStorage.setItem('local-playlist-sorting', this.pluck('id').join());
-      }
-      return this;
-    },
-    loadOrder: function() {
-      if (mixins) {
-        localStorage.getItem('local-playlist-sorting').split(',');
-      }
-      return this;
-    },
+    
+    // saveOrder: function() {
+    //   if (mixins) {
+    //     localStorage.setItem('local-playlist-sorting', this.pluck('id').join(','));
+    //   }
+    //   return this;
+    // },
+    
+    // loadOrder: function() {
+    //   if (mixins) {
+    //     localStorage.getItem('local-playlist-sorting').split(',');
+    //   }
+    //   return this;
+    // },
+
     initialize: function() {
       // this.on('add remove', this.saveOrder);
       this.on('all', function(evName) {
@@ -607,6 +699,8 @@
       this.on('sort', function() {
         
       });
+
+      this.sync('read', this, {});
     }
   });
   return LocalPlaylist;
@@ -716,9 +810,14 @@
           .addClass('current')
         ;
 
-        // var localScrollY =  (Math.max(0, index - 1) * 68) +
-        //                     (Math.max(0, index - 1) * 8);
-        // view.$('.tracks').scrollTo(localScrollY);
+        var localScrollY =  (Math.max(0, index - 1) * 46) +
+                            (Math.max(0, index - 1) * 8);
+        if ($.fn.scrollTo) {
+          view.$('.tracks').scrollTo(localScrollY);
+        }
+        else {
+          view.$('.tracks')[0].scrollTop = localScrollY;
+        }
       });
 
       view.on('current-track', function(trackId) {
@@ -873,6 +972,9 @@
       var ctx = $canvas[0].getContext('2d');
       var width = $canvas[0].width = Math.min($progress.width(), 200);
       var height = $canvas[0].height = Math.min($progress.height(), 200);
+      if (!width || !height) {
+        return this;
+      }
       var padding = 0;
       var white = 'rgba(255, 255, 255, 0.4)';
       var black = 'rgba(0, 0, 0, 0.8)';
@@ -1054,6 +1156,49 @@
   /* global define: true, module: true */
   // CommonJS
   if(typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./../templates'));
+  }
+  // AMD
+  else if(typeof define === 'function' && define.amd) {
+    define('views/user',[
+      'underscore',
+      'backbone',
+      './../templates'
+    ], factory);
+  }
+}(function(_, Backbone, templates) {
+  
+
+  // var $ = Backbone.$;
+  var SCUser = Backbone.View.extend({
+    events: {
+    },
+
+    initialize: function(options) {
+      this.router = options.router;
+      this.listenTo(this.model, 'change', this.render);
+    },
+
+    render: function() {
+      var html = '';
+      // only render if we have a loaded resource
+      if (this.model.id) {
+        var data = this.model.toJSON();
+        data.routePrefix = this.router.routePrefix;
+        html = templates['SCBone/user'](data);
+      }
+      this.$el.html(html);
+      return this;
+    }
+  });
+
+  return SCUser;
+}));
+(function(factory) {
+  
+  /* global define: true, module: true */
+  // CommonJS
+  if(typeof exports === 'object') {
     module.exports = factory(
       require('underscore'),
       require('backbone'),
@@ -1062,7 +1207,8 @@
       require('./collections/users'),
       require('./collections/tracks'),
       require('./views/profile'),
-      require('./templates/player')
+      require('./templates/player'),
+      require('./templates/user')
     );
   }
   // AMD
@@ -1076,14 +1222,15 @@
       './collections/tracks',
       './collections/local-playlist',
       './views/profile',
-      './views/player'
+      './views/player',
+      './views/user'
     ], factory);
   }
   // Browser
   else if (typeof _ !== 'undefined' && typeof Backbone !== 'undefined') {
     window.SCBone = factory(_, Backbone);
   }
-}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, LocalPlaylist, SCProfile, SCPlayer) {
+}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, LocalPlaylist, SCProfile, SCPlayer, SCUserView) {
   var connected;
   var $ = Backbone.$;
   var SCUser = SCUsers.prototype.model;
@@ -1098,14 +1245,14 @@
     return val;
   }
 
-  var scopes = 'track user comment group followers followings tracks users comments groups';
+  var scopes = 'track user comment group followers followings tracks users comments groups host-tracks host-users';
 
   var SCBone = Backbone.Router.extend({
     routePrefix: 'step/sounds',
 
     routes: {
       '':                               'appStart',
-      'users/:id(/:subresource)':       'guestAction',
+      'users/:id(/:subresource)':       'usersAction',
       'host/:subresource':              'hostAction',
       'tracks/:id':                     'playTrack',
       'connect':                        'scConnect'
@@ -1144,10 +1291,10 @@
       });
     },
     
-    guestAction: function(id, subresource) {
+    usersAction: function(id, subresource) {
       console.info('SC router guest', id, subresource);
       var user = this.guest;
-    
+      this.setScope('user');
 
       if (user.id !== id) {
         user.attributes = {};
@@ -1236,6 +1383,14 @@
       router.$el = $(router.el);
       router.routePrefix = options.routePrefix;
 
+      if (!options.hostpermalink) {
+        throw new Error('A `hostpermalink` option must be set.');
+      }
+
+      if (!options.el) {
+        throw new Error('A `el` (DOM element) option must be set.');
+      }
+
       var linksSelector = '[href^="/"]';
       if (options.routePrefix) {
         linksSelector = '[href^="'+ options.routePrefix +'"],'+
@@ -1288,70 +1443,24 @@
       });
       router.player.render();
 
-      router.host.on('change', function(inst, info) {
-        info = info || {};
-        var scope;
-        var name = info.subresource;
-        if (
-          name === 'favorites' ||
-          name === 'tracks'
-        ) {
-          scope = 'tracks';
-          
-          router
-            .player
-              .collection
-                .set(router.host[info.subresource].toJSON());
-          
-          router
-            .player
-              .render({
-                scope: scope
-              });
-        }
-        router.setScope(scope);
-
-
-        // if (!name) {
-        //   scope = false;
-        // }
-        // else if (
-        //   name === 'favorites' ||
-        //   name === 'tracks'
-        // ) {
-        //   scope = 'tracks';  
-        // }
-        // else if (
-        //   name === 'followers' ||
-        //   name === 'followings'
-        // ) {
-        //   scope = 'users';  
-        // }
-        // else {
-        //   scope = name;
-        // }
-
-        // if (scope && router.host[name]) {
-        //   console.info('SC host model "'+ name +'" ('+ scope +') subresource changed');
-        //   if (scope === 'tracks') {
-        //     router.player
-        //       .collection.set(router.host[info.subresource].toJSON());
-        //     router.player.render({
-        //       scope: scope
-        //     });
-        //   }
-        //   else {
-        //     router.player.render({
-        //       scope: scope,
-        //       collection: 
-        //     });
-        //   }
-        // }
+      router.localPlaylist.on('change', function(inst, info) {
+        router
+          .player
+            .render();
       });
+      router.localPlaylist.fetch();
 
       router.host.fetch({});
+      // router.host.fetch({subresource: 'favorites'});
 
       router.guest = new SCUser({});
+
+      router.user = new SCUserView({
+        el:         $('.user', options.el)[0],
+        model:      router.guest,
+        router:     router
+      });
+      router.user.render();
     }
   },
   {
