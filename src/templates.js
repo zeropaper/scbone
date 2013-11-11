@@ -157,7 +157,11 @@
   templates['SCBone/app'] = _.template([
     '',
     '<div class="host-sc-profile host"></div>',
-    '<div class="player"></div>',
+    '<div class="scope player"></div>',
+    '<div class="scope user"></div>',
+    '<div class="scope group"></div>',
+    '<div class="scope host-tracks"></div>',
+    '<div class="scope host-users"></div>',
     ''
   ].join('\n'));
 
