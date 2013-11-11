@@ -1,0 +1,48 @@
+// Colors
+
+@import 'foundation/variables';
+$body-bg: #2a2a2a;
+$body-font-color: #929292;
+
+$body-bg: #000;
+$body-font-color: #fff;
+
+$primary-color: #EFD96A;
+// $primary-color: #53D8EB;
+$secondary-color: #498C96;
+$alert-color: #c60f13;
+$success-color: #5da423;
+
+// Media Queries
+
+// $small-screen: 768px;
+// $medium-screen: 1280px;
+// $large-screen: 1440px;
+
+// $screen: "only screen";
+// $small: "only screen and (min-width: #{$small-screen})";
+// $medium: "only screen and (min-width: #{$medium-screen})";
+// $large: "only screen and (min-width: #{$large-screen})";
+// $landscape: "only screen and (orientation: landscape)";
+// $portrait: "only screen and (orientation: portrait)";
+
+//
+// Grid Variables
+//
+
+// $row-width: em-calc(1000);
+// $column-gutter: em-calc(30);
+// $total-columns: 12;
+
+//
+// Typography Variables
+//
+
+// Control header font styles
+
+// $header-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$header-font-family: "Droid Sans", "droid_sansregular", "Helvetica", Helvetica, Arial, sans-serif;
+$header-font-weight: normal;
+$header-font-style: normal;
+$header-font-color: darken($primary-color, 9%);
+

@@ -1,0 +1,285 @@
+// Make sure the charset is set appropriately
+@charset 'UTF-8';
+
+// This includes all of the foundation global elements that are needed to work with any of the other files.
+@import 'settings';
+
+@import 'normalize';
+
+// Foundation Components
+@import 'foundation/components/global';
+// @import 'foundation/components/grid';
+@import 'foundation/components/visibility';
+//@import 'foundation/components/block-grid';
+@import 'foundation/components/type';
+//@import 'foundation/components/buttons';
+//@import 'foundation/components/forms';
+//@import 'foundation/components/button-groups';
+//@import 'foundation/components/dropdown-buttons';
+//@import 'foundation/components/split-buttons';
+//@import 'foundation/components/flex-video';
+//@import 'foundation/components/section';
+//@import 'foundation/components/top-bar';
+//@import 'foundation/components/orbit';
+//@import 'foundation/components/reveal';
+//@import 'foundation/components/joyride';
+//@import 'foundation/components/clearing';
+//@import 'foundation/components/alert-boxes';
+//@import 'foundation/components/breadcrumbs';
+//@import 'foundation/components/custom-forms';
+//@import 'foundation/components/keystrokes';
+//@import 'foundation/components/labels';
+//@import 'foundation/components/inline-lists';
+//@import 'foundation/components/pagination';
+//@import 'foundation/components/panels';
+//@import 'foundation/components/pricing-tables';
+//@import 'foundation/components/progress-bars';
+//@import 'foundation/components/side-nav';
+//@import 'foundation/components/sub-nav';
+//@import 'foundation/components/switch';
+//@import 'foundation/components/magellan';
+//@import 'foundation/components/tables';
+//@import 'foundation/components/thumbs';
+//@import 'foundation/components/tooltips';
+//@import 'foundation/components/dropdown';
+
+@import 'compass/css3/transform';
+@import 'compass/css3/transition';
+@import 'compass/css3/filter';
+@import 'icons';
+
+body {
+  background-color: #222;
+}
+
+$gutter: 8px;
+$block-size: 100px;
+$total-width: 9;
+$host-width: 2;
+
+@function block($count, $pad: 0) {
+  // @return emCalc(($block-size * $count) + ($gutter * ($count - 1)) + $pad);
+  @return (($block-size * $count) + ($gutter * ($count - 1)) + $pad);
+}
+
+.scbone {
+  width: block(9, 0 - $gutter);
+  position: relative;
+  left: 50%;
+  top: block(1);
+  margin-left: 0 - (block(9, 0 - $gutter) / 2);
+  overflow: visible;
+  max-height: block(7);
+}
+
+.scbone .list {
+  ul,
+  ol {
+    list-style: none;
+  }
+}
+
+.scbone .host {
+  width: block($host-width);
+  overflow: visible;
+
+  .picture,
+  .info,
+  .subresources,
+  .description {
+    background-color: $body-bg;
+    display: block;
+    position: relative;
+  }
+  
+  .info,
+  .subresources,
+  .description {
+    padding: $gutter;
+  }
+  
+  .block-h {
+    overflow: hidden;
+    width: block($host-width + 1);
+    height: block(1);
+  }
+  
+  .picture,
+  .info {
+    float: left;
+    height: block(1);
+  }
+
+  .block-h,
+  .subresources {
+    height: block(1);
+    margin-bottom: $gutter;
+  }
+
+  .picture {
+    width: block(1);
+    height: block(1);
+    margin: 0 $gutter $gutter 0;
+  }
+
+  .info {
+    width: block($host-width);
+    // float: left;
+  }
+
+  .full-name,
+  .city,
+  .country {
+    font-size: small;
+  }
+
+  .username {
+    display: block;
+    text-transform: uppercase;
+    margin-bottom: $gutter;
+  }
+  .full-name {
+    display: block;
+    margin-bottom: $gutter;
+  }
+
+  .subresources {
+    list-style: none;
+    overflow: hidden;
+    font-size: small;
+    li {
+      // float: left;
+      // display: block;
+      // width: 50%;
+      
+      // height: block(0.5, 0 - $gutter);
+      // line-height: block(0.5);
+    }
+  }
+  
+  .description {
+    max-height: block(3);
+    min-height: block(0.5);
+  }
+}
+
+.scbone .profile {
+}
+
+.scbone .player {
+  position: absolute;
+  top: block(1, $gutter);
+  left: block($host-width, $gutter);
+  width: block($total-width - $host-width, 0 - $gutter);
+
+  .progress,
+  .controls,
+  .logos {
+    width: block(1);
+    background-color: $body-bg;
+    position: absolute;
+    left: 0;
+  }
+
+  .progress,
+  canvas {
+    height: block(1);
+  }
+
+  .progress {
+    top: block(0.5, $gutter);
+  }
+
+  .controls,
+  .logos {
+    height: block(0.5);
+  }
+  
+  .controls {
+    top: 0;
+    button {
+      position: relative;
+      width: 50%;
+      float: left;
+      height: block(0.5);
+      background: none;
+      color: $primary-color;
+      border: none; 
+    }
+  }
+
+  .logos {
+    top: block(1.5, $gutter);
+  }
+
+  .tracks {
+    position: relative;
+    left: block(1, $gutter);
+    width: block($total-width - ($host-width + 1), 0 - $gutter);
+  }
+}
+
+.scbone .tracks {
+  li {
+    background-color: $body-bg;
+    margin-bottom: $gutter;
+    overflow: hidden;
+    position: relative;
+
+    height: block(0.5);
+    padding: 0 $gutter;
+
+    @include transition(padding-left 0.3s, height 0.3s);
+
+    &:hover {
+      padding: 0 $gutter 0 block(1, $gutter);
+      height: block(1);
+      .artwork {
+        height: block(1);
+        opacity: 1;
+      }
+    }
+
+    &.no-artwork,
+    &.current {
+      padding: 0 $gutter;
+    }
+    &.current {
+      height: block(1);
+      background-color: lighten($body-bg, 20%);
+      .artwork {
+        display: none;
+      }
+    }
+  }
+  
+  .artwork {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    height: block(0.5);
+    @include transition(opacity 0.3s, height 0.3s);
+  }
+
+  .title {
+    padding: $gutter 0;
+    min-height: block(0.5);
+    display: block;
+  }
+
+  .duration,
+  .likes {
+    display: inline-block;
+    min-width: block(0.5);
+    font-size: small;
+  }
+}
+
+.scbone .users {
+
+}
+
+.scbone .comments {
+
+}
