@@ -79,6 +79,10 @@ $host-width: 2;
   }
 }
 
+.scbone .description {
+  line-height: 1.2;
+}
+
 .scbone .host {
   width: block($host-width);
   overflow: visible;
@@ -87,7 +91,7 @@ $host-width: 2;
   .info,
   .subresources,
   .description {
-    background-color: $body-bg;
+    background-color: lighten($body-bg, 30%);
     display: block;
     position: relative;
   }
@@ -151,7 +155,7 @@ $host-width: 2;
       // float: left;
       // display: block;
       // width: 50%;
-      
+
       // height: block(0.5, 0 - $gutter);
       // line-height: block(0.5);
     }
@@ -163,7 +167,65 @@ $host-width: 2;
   }
 }
 
-.scbone .profile {
+.scbone .scope.user {
+  position: absolute;
+  top: block(0.5, $gutter);
+  width: block($total-width - ($host-width + 1), 0 - $gutter);
+  left: block($host-width + 1, $gutter);
+
+  .block-h {
+    overflow: hidden;
+    width: 100%;
+    height: block(1);
+    margin-bottom: $gutter;
+  }
+
+  .info,
+  .subresources,
+  .description {
+    display: block;
+    padding: $gutter;
+    background-color: lighten($body-bg, 20%);
+  }
+
+  .picture,
+  .info {
+    display: inline;
+    float: left;
+  }
+
+  .picture {
+    width: block(1);
+    height: block(1);
+    margin-right: $gutter;
+  }
+
+  .info {
+    height: block(1);
+    width: block($total-width - ($host-width + 2), 0 - $gutter);
+  }
+
+  .username {
+    display: block;
+    margin-bottom: $gutter;
+    text-transform: uppercase;
+  }
+
+  .subresources {
+    height: block(0.5);
+    text-align: center;
+    margin: 0 0 $gutter 0;
+    font-size: small;
+    li {
+      line-height: block(0.5, 0 - ($gutter * 2));
+      padding: 0 ($gutter / 0.5);
+      display: inline-block;
+    }
+  }
+
+  .description {
+    min-height: block(1);
+  }
 }
 
 .scbone .player {
@@ -171,6 +233,8 @@ $host-width: 2;
   top: block(1, $gutter);
   left: block($host-width, $gutter);
   width: block($total-width - $host-width, 0 - $gutter);
+  min-height: block(2);
+  z-index: 99;
 
   .progress,
   .controls,
@@ -216,6 +280,8 @@ $host-width: 2;
     position: relative;
     left: block(1, $gutter);
     width: block($total-width - ($host-width + 1), 0 - $gutter);
+    max-height: block(4);
+    overflow: auto;
   }
 }
 
@@ -282,4 +348,37 @@ $host-width: 2;
 
 .scbone .comments {
 
+}
+
+.scbone {
+  &.user,
+  &.group {
+    .player {
+      width: block(1);
+      max-height: block(2);
+      overflow: hidden;
+      &:hover {
+        z-index: 99;
+        max-height: block(4);
+        width: block($total-width - $host-width, 0 - $gutter);
+      }
+    }
+  }
+  &.user {
+    .scope.group {
+      display: none;
+    }
+  }
+  &.group {
+    .scope.user {
+      display: none;
+    }
+  }
+  &.player,
+  &.tracks {
+    .scope.user,
+    .scope.group {
+      display: none;
+    }
+  }
 }
