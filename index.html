@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html lang="en" class="no-js ie6 oldie"> <![endif]-->
+<!--[if IE 7]>    <html lang="en" class="no-js ie7 oldie"> <![endif]-->
+<!--[if IE 8]>    <html lang="en" class="no-js ie8 oldie"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class='no-js' lang='{{#if page.language}}{{page.language}}{{else}}en{{/if}}'>
+  <!--<![endif]-->
+  <head>
+    <meta charset='utf-8' />
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
+    
+    <title>SCBone demo</title>
+    
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    
+    <link href='styles.css' rel='stylesheet' />
+    <script src='bower_components/modernizr/modernizr.js'></script>
+  </head>
+  <body>
+    <div class="scbone">
+
+    </div>
+    <script type="text/javascript" src="bower_components/requirejs/require.js"></script>
+    <!-- <script type="text/javascript" src="scbone-dependencies.js"></script> -->
+    <script type="text/javascript">
+    var app;
+
+    require.config({
+      paths: {
+        // underscore: 'bower_components/underscore/underscore',
+        // jquery: 'bower_components/jquery/jquery',
+        // moment: 'bower_components/moment/moment',
+        // backbone: 'bower_components/backbone/backbone'
+      },
+      shim: {
+        underscore: {
+          exports: '_'
+        },
+        jquery: {
+          exports: 'jQuery'
+        },
+        'jquery.scrollto': {
+          deps: ['jquery'],
+          exports: 'jQuery.fn.scrollTo'
+        },
+        moment: {
+          exports: 'moment'
+        },
+        backbone: {
+          deps: ['jquery', 'underscore'],
+          exports: 'Backbone'
+        },
+
+        scbone: {
+          deps: ['backbone', 'moment']
+        }
+      }
+    });
+
+
+    require(['scbone'], function(SCBone) {
+
+      app = new SCBone({
+        el:             $('.scbone')[0],
+        hostpermalink:   'zeropaper',
+        // hostpermalink:   'miss-wonderland',
+
+        clientid:       '4add73ea707eab55375f2386bdcd494e',
+        callbackurl:    'http://'+ location.host +'/auth-callback.html',
+      });
+
+      Backbone.history.start({pushstate: Modernizr.history});
+
+      console.info('app', app);
+    });
+    
+    </script>
+    <!-- <script type="text/javascript" data-main="scbone" src="bower_components/requirejs/require.js"></script> -->
+
+    <script type="text/javascript">
+      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35728/livereload.js?snipver=1"></' + 'script>');
+    </script>
+  </body>
+</html>
