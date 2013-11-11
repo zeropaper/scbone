@@ -94,6 +94,66 @@
     ''
   ].join('\n'));
 
+  templates['SCBone/user'] = _.template([
+    '',
+    '<% var prefix = "#"+ (routePrefix ? routePrefix +"/" : ""); %>',
+
+    '<div class="block-h">',
+
+      '<a href="<%- prefix %>users/<%- permalink %>" class="picture">',
+        '<img src="<%- avatar_url %>" alt="<%- username %>" />',
+      '</a>',
+
+      '<div class="info">',
+        '<a href="<%- prefix %>users/<%- permalink %>" class="username"><%- username %></a>',
+        '<span class="full-name"><%- full_name %></span>',
+        
+        '<span class="city"><%- city %></span><%= (country && city ? "," : "") %>',
+        '<span class="country"><%- country %></span>',
+      '</div>',
+
+    '</div>',
+
+    '<ul class="subresources">',
+
+      '<li>',
+        '<%= (public_favorites_count ? "<a href=\\""+ prefix +"users/"+ permalink +"/favorites\\">" : "<div>") %>',
+          '<i class="icon-heart"></i>',
+          '<span><%- (public_favorites_count || "") %></span>',
+          'Likes',
+        '<%= (public_favorites_count ? "</a>" : "</div>") %>',
+      '</li>',
+  
+      '<li>',
+        '<%= (track_count ? "<a href=\\""+ prefix +"users/"+ permalink +"/tracks\\">" : "<div>") %>',
+          '<i class="icon-mic"></i>',
+          '<span><%- (track_count || 0) %></span>',
+          'Tracks',
+        '<%= (track_count ? "</a>" : "</div>") %>',
+      '</li>',
+  
+      '<li>',
+        '<%= (followings_count ? "<a href=\\""+ prefix +"users/"+ permalink +"/followings\\">" : "<div>") %>',
+          '<i class="icon-angle-left"></i>',
+          '<span><%- (followings_count || 0) %></span>',
+          'Followings',
+        '<%= (followings_count ? "</a>" : "</div>") %>',
+      '</li>',
+
+      '<li>',
+        '<%= (followers_count ? "<a href=\\""+ prefix +"users/"+ permalink +"/followers\\">" : "<div>") %>',
+          '<i class="icon-angle-right"></i>',
+          '<span><%- (followers_count || 0) %></span>',
+          'Followers',
+        '<%= (followers_count ? "</a>" : "</div>") %>',
+      '</li>',
+
+    '</ul>',
+
+    '<div class="description"><%- description %></div>',
+    ''
+  ].join('\n'));
+
   templates['SCBone/app'] = _.template([
     '',
     '<div class="host-sc-profile host"></div>',
