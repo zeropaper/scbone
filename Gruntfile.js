@@ -17,16 +17,7 @@ module.exports = function(grunt) {
     'src/views/*.js'
   ];
 
-  var depsFiles = [
-    'bower_components/requirejs/require.js',
-    'bower_components/underscore/underscore.js',
-    'bower_components/jquery/jquery.js',
-    'bower_components/jquery.scrollTo/jquery.scrollTo.js',
-    'bower_components/backbone/backbone.js',
-    'bower_components/moment/moment.js'
-  ];
 
-  
   // Project configuration.
   grunt.initConfig({
     pkg         : pkg,
@@ -36,6 +27,23 @@ module.exports = function(grunt) {
       scripts: [
         setup.scriptsdir +'/**/*.js'
       ]
+    },
+
+    compass: {
+      compile: {
+        options: {
+          sassDir: 'scss',
+          cssDir: '.',
+          imagesDir: 'images',
+          // javascriptsDir: '',
+          fontsDir: 'fonts',
+          importPath: [
+            'bower_components/foundation/scss'
+          ],
+          relativeAssets: true,
+          outputStyle: 'nested',
+        }
+      }
     },
 
     uglify: {
@@ -52,35 +60,110 @@ module.exports = function(grunt) {
         '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       dist: {
-        sourceMap: 'scbone.min.map.js',
         files: {
-          'scbone.min.js': srcFiles,
-          'scbone-dependencies.min.js': depsFiles
+          'scbone-dependencies.min.js': ['scbone-dependencies.js'],
+          'scbone-almond.min.js': ['scbone-almond.js'],
+          'scbone.min.js': ['scbone.js']
         }
-      },
-      dev: {
-        options: {
-          compress: false,
-          preserveComments: true,
-          beautify: {
-            beautify: true,
-            indent_level: 2,
-            comments: true
-          },
-          mangle: false
+      }
+    },
+
+    requirejs: {
+      options: {
+        baseUrl: 'src',
+        optimize: 'none',
+
+        paths: {
+          'underscore':      './../bower_components/underscore/underscore',
+          'backbone':        './../bower_components/backbone/backbone',
+          'moment':          './../bower_components/moment/moment',
+          'zepto':           './../bower_components/zepto/zepto',
+          'jquery':          './../bower_components/jquery/jquery',
+          'jquery.scrollto': './../bower_components/jquery.scrollTo/jquery.scrollTo',
+
+          'scbone':          'router'
         },
 
-        files: {
-          'scbone.js': srcFiles,
-          'scbone-dependencies.js': depsFiles
+        shim: {
+          underscore: {
+            exports: ['_']
+          },
+          moment: {
+            exports: ['moment']
+          },
+          zepto: {
+            exports: ['Zepto']
+          },
+          jquery: {
+            exports: ['jQuery']
+          },
+          'jquery.scrollTo': {
+            exports: ['$.fn.scrollTo'],
+            deps: ['jquery']
+          },
+          backbone: {
+            exports: ['Backbone'],
+            deps: ['jquery', 'underscore']
+          },
+
+          scbone: {
+            exports: ['SCBone'],
+            deps: [
+              'backbone',
+              'jquery.scrollto',
+              'moment'
+            ]
+          }
+        }
+      },
+      deps: {
+        options: {
+          out: 'scbone-dependencies.js',
+          name: '../bower_components/requirejs/require',
+          wrap: true,
+          include: [
+            'jquery',
+            'jquery.scrollto',
+            'underscore',
+            'backbone',
+            'moment'
+          ],
+        }
+      },
+      lib: {
+        options: {
+          out: 'scbone.js',
+          name: 'scbone',
+          // wrap: true,
+          exclude: [
+            'backbone',
+            'jquery',
+            'jquery.scrollto',
+            'underscore',
+            'moment'
+          ]
+        }
+      },
+      almond: {
+        options: {
+          out: 'scbone-almond.js',
+          name: '../bower_components/almond/almond',
+          wrap: true,
+          include: ['scbone'],
+          exclude: [
+            'backbone',
+            'jquery',
+            'jquery.scrollto',
+            'underscore',
+            'moment'
+          ]
         }
       }
     },
 
     watch: {
-      package: {
-        files: ['package.json'],
-        tasks: ['build']
+      options: {
+        livereload: false
       },
 
       scripts: {
@@ -90,6 +173,36 @@ module.exports = function(grunt) {
         tasks: [
           'build'
         ]
+      },
+
+      styles: {
+        files: [
+          'scss/**/*.scss'
+        ],
+        tasks: [
+          'compass'
+        ]
+      },
+
+      dev: {
+        files: [
+          '*.{css,js,html}'
+        ],
+        tasks: [],
+        options: {
+          livereload: 35728
+        }
+      }
+    },
+
+    connect: {
+      dev: {
+        options: {
+          hostname: '*',
+          port: '8001',
+          base: __dirname,
+          livereload: 35728
+        }
       }
     }
   });
@@ -101,17 +214,20 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('assemble');
 
   grunt.registerTask('build', [
-    'jshint:scripts',
-    'uglify'
+    'jshint',
+    'requirejs',
+    'compass'
   ]);
 
   // Default tasks to be run.
   grunt.registerTask('dev', [
     'build',
+    'connect',
     'watch'
   ]);
 
   grunt.registerTask('default', [
-    'build'
+    'build',
+    'uglify'
   ]);
 };
