@@ -3,13 +3,13 @@
   /* global module: true, define: true */
   // CommonJS
   if(typeof exports === 'object') {
-    module.exports = factory();
+    module.exports = factory(require('backbone'));
   }
   // AMD
   else if(typeof define === 'function' && define.amd) {
-    define([], factory);
+    define(['backbone'], factory);
   }
-}(function() {
+}(function(Backbone) {
   'use strict';
   var noop = function(){};
 
@@ -85,21 +85,45 @@
   // });
   // ```
   function localSync(scope) {
-    return function(method, model, options) {
+    return function(method, instance, options) {
       var success = options.success || noop;
       var error = options.error || noop;
+      var isModel = instance instanceof Backbone.Model;
       
       var id = scope +':';
-      id = id + (model.id ? model.id : '#'+ model.cid);
+      id = id + isModel ? (instance.id ? instance.id : '#'+ instance.cid) : 'keys';
 
       switch (method) {
         case 'create':
         case 'update':
         case 'patch':
-          localStorage.setItem(id, JSON.stringify(model.toJSON()));
+          if (isModel) {
+            localStorage.setItem(id, JSON.stringify(instance.toJSON()));
+          }
+          else {
+            localStorage.setItem(id, _.keys(instance._byId).join(','));
+          }
           break;
         case 'read':
-          success(JSON.parse(localStorage.getItem(id)));
+          if (isModel) {
+            success(JSON.parse(localStorage.getItem(id)));
+          }
+          else {
+            var idAttribute = instance.model.prototype.idAttribute;
+            var ids = (localStorage.getItem(id) || '').split(',');
+            var models = _.compact(_.map(ids, function(mId) {
+              // exclude models who have no ID
+              if (mId && mId.substr(0, 1) !== 'c') {
+                return JSON.parse(localStorage.getItem(scope +':'+ mId));
+              }
+            }));
+
+            instance.reset(models);
+            // instance.each(function(model) {
+            //   model.set({});
+            // });
+            // success();
+          }
           break;
         case 'delete':
 
