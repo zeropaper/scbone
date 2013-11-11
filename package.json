@@ -36,7 +36,8 @@
     "underscore": "~1.5.2",
     "handlebars": "~1.0.12",
     "minimatch": "~0.2.12",
-    "assemble": "~0.4.13"
+    "assemble": "~0.4.13",
+    "expect.js": "~0.2.0"
   },
   "dependencies": {
     "backbone": "~1.1.0"
