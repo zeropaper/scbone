@@ -67,4 +67,4 @@ I perfectly know that it isn't the way to do it, it's a personal project, but I'
 License
 -------
 
-This piece of code is licensed under the MIT license (see LICENSE).
+This piece of code is licensed under the MIT license (see [LICENSE](https://raw.github.com/zeropaper/scbone/master/LICENSE)).
