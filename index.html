@@ -21,65 +21,54 @@
 
     </div>
     <script type="text/javascript" src="require.js"></script>
-    <!-- <script type="text/javascript" src="scbone-dependencies.js"></script> -->
     <script type="text/javascript">
-    var app;
+var app;
 
-    require.config({
-      paths: {
-        // underscore: 'bower_components/underscore/underscore',
-        // jquery: 'bower_components/jquery/jquery',
-        // moment: 'bower_components/moment/moment',
-        // backbone: 'bower_components/backbone/backbone'
-        'jquery.scrollto': 'jquery.scrollTo'
-      },
-      shim: {
-        underscore: {
-          exports: '_'
-        },
-        jquery: {
-          exports: 'jQuery'
-        },
-        'jquery.scrollto': {
-          deps: ['jquery'],
-          exports: 'jQuery.fn.scrollTo'
-        },
-        moment: {
-          exports: 'moment'
-        },
-        backbone: {
-          deps: ['jquery', 'underscore'],
-          exports: 'Backbone'
-        },
+require.config({
+  paths: {
+    'jquery.scrollto': 'jquery.scrollTo'
+  },
+  shim: {
+    underscore: {
+      exports: '_'
+    },
+    jquery: {
+      exports: 'jQuery'
+    },
+    'jquery.scrollto': {
+      deps: ['jquery'],
+      exports: 'jQuery.fn.scrollTo'
+    },
+    moment: {
+      exports: 'moment'
+    },
+    backbone: {
+      deps: ['jquery', 'underscore'],
+      exports: 'Backbone'
+    },
 
-        scbone: {
-          deps: ['backbone', 'moment']
-        }
-      }
-    });
+    scbone: {
+      deps: ['backbone', 'moment']
+    }
+  }
+});
 
 
-    require(['scbone'], function(SCBone) {
+require(['scbone'], function(SCBone) {
 
-      app = new SCBone({
-        el:             $('.scbone')[0],
-        hostpermalink:   'zeropaper',
-        // hostpermalink:   'miss-wonderland',
+  app = new SCBone({
+    el:             $('.scbone')[0],
+    hostpermalink:   'zeropaper',
+    // hostpermalink:   'miss-wonderland',
 
-        clientid:       '4add73ea707eab55375f2386bdcd494e',
-        callbackurl:    'http://'+ location.host +'/auth-callback.html',
-      });
+    clientid:       '4add73ea707eab55375f2386bdcd494e',
+    callbackurl:    'http://'+ location.host +'/auth-callback.html',
+  });
 
-      Backbone.history.start({pushstate: Modernizr.history});
+  Backbone.history.start({pushstate: Modernizr.history});
 
-      console.info('app', app);
-    });
-    
-    </script>
-    <!-- <script type="text/javascript" data-main="scbone" src="bower_components/requirejs/require.js"></script> -->
-
-    <script type="text/javascript">
-      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35728/livereload.js?snipver=1"></' + 'script>');
+  console.info('app', app);
+});
     </script>
   </body>
 </html>
