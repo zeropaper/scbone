@@ -56,9 +56,9 @@
           .addClass('current')
         ;
 
-        var localScrollY =  (Math.max(0, index - 1) * 68) +
-                            (Math.max(0, index - 1) * 8);
-        view.$('.tracks').scrollTo(localScrollY);
+        // var localScrollY =  (Math.max(0, index - 1) * 68) +
+        //                     (Math.max(0, index - 1) * 8);
+        // view.$('.tracks').scrollTo(localScrollY);
       });
 
       view.on('current-track', function(trackId) {
@@ -211,8 +211,8 @@
       }
       var $progress = this.$('.progress');
       var ctx = $canvas[0].getContext('2d');
-      var width = $canvas[0].width = $progress.width();
-      var height = $canvas[0].height = $progress.height();
+      var width = $canvas[0].width = Math.min($progress.width(), 200);
+      var height = $canvas[0].height = Math.min($progress.height(), 200);
       var padding = 0;
       var white = 'rgba(255, 255, 255, 0.4)';
       var black = 'rgba(0, 0, 0, 0.8)';

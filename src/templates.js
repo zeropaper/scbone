@@ -96,7 +96,7 @@
 
   templates['SCBone/app'] = _.template([
     '',
-    '<div class="host-sc-profile"></div>',
+    '<div class="host-sc-profile host"></div>',
     '<div class="player"></div>',
     ''
   ].join('\n'));
@@ -107,7 +107,7 @@
 
     // '<section class="details"></section>',
    
-    '<div class="progress"><canvas /></div>',
+    '<div class="progress"></div>',
     
     '<div class="controls"></div>',
 
