@@ -19,14 +19,26 @@
     "node_modules",
     "bower_components",
     "app/components",
+    "docs",
+    "templates",
+    "fonts",
+    "scss",
+    "build",
     "test",
     "tests"
   ],
   "dependencies": {
     "underscore": "*",
-    "jquery": "~1.9.0",
+    "jquery": "1.9",
     "backbone": "~1.1.0",
     "requirejs": "~2.1.9",
-    "moment": "~2.4.0"
+    "moment": "~2.4.0",
+    "jquery.scrollTo": "~1.4.6",
+    "fastclick": "~0.6.10"
+  },
+  "devDependencies": {
+    "almond": "~0.2.6",
+    "modernizr": "~2.6.2",
+    "foundation": "~4.3.2"
   }
 }
