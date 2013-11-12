@@ -24,7 +24,8 @@
       'click .progress':        'playPause',
       'click .prev':            'previousTrack',
       'click .next':            'nextTrack',
-      'click .tracks .title':   'playTrack',
+      'click .tracks .title a': 'playTrack',
+      'click .js-remove':       'removeTrack',
       'click .modal .underlay': 'modalClose',
       'click .tracks likes':    'like'
     },
@@ -35,14 +36,7 @@
       view.sound = null;
       view.trackId = null;
 
-      view.listenTo(view.collection, 'all', function(evName) {
-        console.info('player.collection event', evName);
-      });
-
-      // view.collection.on('change reset', view.tracks.render);
       view.listenTo(view.collection, 'current-track', function(collection, index, trackId) {
-        console.info('current-track event on collection', trackId, index);
-
         if (view.trackId === trackId) {
           return;
         }
@@ -122,7 +116,6 @@
         router: view.router
       });
       view.tracks.render();
-      console.info('view.tracks', view.el, view.tracks.el, view.tracks);
     },
 
     playPause: function(ev) {
@@ -176,6 +169,13 @@
         this.setCurrentById(id);
         return false;
       }
+    },
+
+    removeTrack: function(ev) {
+      var id = $('a', ev.target.parentNode).attr('href').split('/').pop();
+      id = parseInt(id, 10);
+      var track = this.collection.get(id);
+      this.collection.remove([track]);
     },
 
     getCurrent: function() {
@@ -324,7 +324,6 @@
       this.drawProgress();
 
       if (options.scope && _.isFunction(this[options.scope +'Render'])) {
-        // console.info('options.scope', options.scope);
         this[options.scope +'Render'](options);
       }
       
@@ -335,14 +334,6 @@
       options = options || {};
       var view = this;
       
-      // var collection = options.collection || view.collection;
-      // var tracks = collection.map(function(track, t) {
-      //   var data = track.toJSON();
-      //   data.routePrefix = view.router.routePrefix;
-      //   return templates['SCBone/trackItem'](data);
-      // });
-      // view.$('.tracks ul').html(tracks.join(''));
-      console.info('rendering player tracks');
       view.tracks.render();
 
       return view;

@@ -176,7 +176,7 @@
     '<div class="controls"></div>',
 
     '<div class="logos">',
-      '<a class="soundcloud" href="http://soundcloud.com" title="powered by Soundcloud">powered by Soundcloud</a>',
+      '<a class="soundcloud" href="http://soundcloud.com" title="powered by Soundcloud"><img src="images/logo_big_white.png" alt="powered by Soundcloud" /></a>',
     '</div>',
     
     // '<section class="list users"><ul></ul></section>',
@@ -203,6 +203,7 @@
     'var prefix = "#"+ (routePrefix ? routePrefix +"/" : "");',
     'var likes = (typeof favoritings_count !== "undefined" ? favoritings_count : 0);',
     'var user_liked = (typeof user_favorite !== "undefined" && user_favorite);',
+    'var removeable = (typeof removeable !== "undefined" && removeable);',
     '%>',
 
     '<li<%= (artwork_url ? "" : " class=\\"no-artwork\\"") %>>',
@@ -212,6 +213,9 @@
 
       '<div class="track-info <%- sharing %>">',
         '<div class="title">',
+          '<% if (removeable) { %>',
+          '<i class="icon-minus js-remove"></i>',
+          '<% } %>',
           '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
         '</div>',
         
