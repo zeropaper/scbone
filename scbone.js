@@ -177,13 +177,13 @@
     '<div class="controls"></div>',
 
     '<div class="logos">',
-      '<a class="soundcloud" href="http://soundcloud.com" title="powered by Soundcloud">powered by Soundcloud</a>',
+      '<a class="soundcloud" href="http://soundcloud.com" title="powered by Soundcloud"><img src="images/logo_big_white.png" alt="powered by Soundcloud" /></a>',
     '</div>',
     
     // '<section class="list users"><ul></ul></section>',
     // '<section class="list comments"><ul></ul></section>',
     // '<section class="list groups"><ul></ul></section>',
-    '<section class="list tracks"><ul></ul></section>',
+    '<section class="list tracks"><ol></ol></section>',
     ''
   ].join('\n'));
 
@@ -204,6 +204,7 @@
     'var prefix = "#"+ (routePrefix ? routePrefix +"/" : "");',
     'var likes = (typeof favoritings_count !== "undefined" ? favoritings_count : 0);',
     'var user_liked = (typeof user_favorite !== "undefined" && user_favorite);',
+    'var removeable = (typeof removeable !== "undefined" && removeable);',
     '%>',
 
     '<li<%= (artwork_url ? "" : " class=\\"no-artwork\\"") %>>',
@@ -213,6 +214,9 @@
 
       '<div class="track-info <%- sharing %>">',
         '<div class="title">',
+          '<% if (removeable) { %>',
+          '<i class="icon-minus js-remove"></i>',
+          '<% } %>',
           '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
         '</div>',
         
@@ -408,9 +412,9 @@
       var success = options.success || noop;
       var error = options.error || noop;
       var isModel = instance instanceof Backbone.Model;
-      
+
       var id = scope +':';
-      id = id + isModel ? (instance.id ? instance.id : '#'+ instance.cid) : 'keys';
+      id = id + (isModel ? (instance.id ? instance.id : '#'+ instance.cid) : 'keys');
 
       switch (method) {
         case 'create':
@@ -421,6 +425,7 @@
           }
           else {
             localStorage.setItem(id, _.keys(instance._byId).join(','));
+            instance.each(function(model) {model.sync('update', model, {});});
           }
           break;
         case 'read':
@@ -584,7 +589,6 @@
     
     setCurrent: function(index) {
       index = parseInt(index || 0, 10);
-      console.info('setCurrent index', index);
       
       if (this.current === index && index !== false) {
         return this;
@@ -620,7 +624,6 @@
           index = i;
         }
       });
-      console.info('index for '+ id, index);
       return index;
     },
 
@@ -675,29 +678,12 @@
   var LocalPlaylist = TracksCollection.extend({
     sync: mixins ? mixins.localSync('local-playlist') : noop,
     model: LocalTrackModel,
-    
-    // saveOrder: function() {
-    //   if (mixins) {
-    //     localStorage.setItem('local-playlist-sorting', this.pluck('id').join(','));
-    //   }
-    //   return this;
-    // },
-    
-    // loadOrder: function() {
-    //   if (mixins) {
-    //     localStorage.getItem('local-playlist-sorting').split(',');
-    //   }
-    //   return this;
-    // },
 
     initialize: function() {
-      // this.on('add remove', this.saveOrder);
-      this.on('all', function(evName) {
-        console.info('evName on local playlist', evName);
-      });
-
-      this.on('sort', function() {
-        
+      this.on('sort add remove', function() {
+        this.sync('update', this, {
+          silent: true
+        });
       });
 
       this.sync('read', this, {});
@@ -757,7 +743,64 @@
   /* global define: true, module: true */
   // CommonJS
   if(typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./../templates'), require('moment'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./../templates'), require('./../collection/local-playlist'));
+  }
+  // AMD
+  else if(typeof define === 'function' && define.amd) {
+    define('views/tracks',[
+      'underscore',
+      'backbone',
+      './../templates',
+      './../collections/local-playlist'
+    ], factory);
+  }
+}(function(_, Backbone, templates, LocalPlaylist) {
+  
+
+  // var $ = Backbone.$;
+  var SCUser = Backbone.View.extend({
+    tagName: 'ol',
+    className: 'tracks-list',
+    
+    events: {
+
+    },
+
+    initialize: function(options) {
+      this.router = options.router;
+      this.listenTo(this.collection, 'change reset add remove', this.render);
+    },
+
+    render: function(options) {
+      options = options || {};
+      var view = this;
+      var removeable = this.collection instanceof LocalPlaylist;
+      // console.info('models are removeable', removeable);
+      var collection = options.collection || view.collection;
+      var tracks = collection.map(function(track, t) {
+        var data = track.toJSON();
+        data.routePrefix = view.router.routePrefix;
+        data.removeable = removeable;
+        return templates['SCBone/trackItem'](data);
+      });
+
+      view
+        .undelegateEvents()
+        .$el.html(tracks.join(''));
+      view.delegateEvents();
+
+      return view;
+    }
+  });
+
+  return SCUser;
+}));
+(function(factory) {
+  
+  /* global define: true, module: true */
+  // CommonJS
+  if(typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./../templates'), require('./tracks'), require('moment'));
   }
   // AMD
   else if(typeof define === 'function' && define.amd) {
@@ -765,10 +808,11 @@
       'underscore',
       'backbone',
       './../templates',
+      './tracks',
       'moment'
     ], factory);
   }
-}(function(_, Backbone, templates) {
+}(function(_, Backbone, templates, SCTracks) {
   
   var $ = Backbone.$;
 
@@ -777,7 +821,8 @@
       'click .progress':        'playPause',
       'click .prev':            'previousTrack',
       'click .next':            'nextTrack',
-      'click .tracks .title':   'playTrack',
+      'click .tracks .title a': 'playTrack',
+      'click .js-remove':       'removeTrack',
       'click .modal .underlay': 'modalClose',
       'click .tracks likes':    'like'
     },
@@ -788,10 +833,7 @@
       view.sound = null;
       view.trackId = null;
 
-      view.listenTo(view.collection, 'change', view.render);
       view.listenTo(view.collection, 'current-track', function(collection, index, trackId) {
-        console.info('current-track event on collection', trackId, index);
-
         if (view.trackId === trackId) {
           return;
         }
@@ -865,10 +907,12 @@
       view.$('.progress').append(view.$canvas);
       view.ctx = view.$canvas[0].getContext('2d');
 
-      view.$tracks = this.$('.tracks ol');
-
-      view.trackTemplate = view.$tracks.html();
-      view.$tracks.empty();
+      view.tracks = new SCTracks({
+        el: view.$('.tracks ol')[0],
+        collection: view.collection,
+        router: view.router
+      });
+      view.tracks.render();
     },
 
     playPause: function(ev) {
@@ -922,6 +966,13 @@
         this.setCurrentById(id);
         return false;
       }
+    },
+
+    removeTrack: function(ev) {
+      var id = $('a', ev.target.parentNode).attr('href').split('/').pop();
+      id = parseInt(id, 10);
+      var track = this.collection.get(id);
+      this.collection.remove([track]);
     },
 
     getCurrent: function() {
@@ -1070,7 +1121,6 @@
       this.drawProgress();
 
       if (options.scope && _.isFunction(this[options.scope +'Render'])) {
-        // console.info('options.scope', options.scope);
         this[options.scope +'Render'](options);
       }
       
@@ -1081,13 +1131,7 @@
       options = options || {};
       var view = this;
       
-      var collection = options.collection || view.collection;
-      var tracks = collection.map(function(track, t) {
-        var data = track.toJSON();
-        data.routePrefix = view.router.routePrefix;
-        return templates['SCBone/trackItem'](data);
-      });
-      view.$('.tracks ul').html(tracks.join(''));
+      view.tracks.render();
 
       return view;
     },
@@ -1241,7 +1285,6 @@
       localStorage.setItem('scbone-access-token', value);
     }
     var val = localStorage.getItem('scbone-access-token');
-    console.info('scAccessToken', value, val);
     return val;
   }
 
@@ -1258,9 +1301,7 @@
       'connect':                        'scConnect'
     },
 
-    appStart: function() {
-      // console.info('appStart');
-    },
+    appStart: function() {},
 
     playTrack: function(id) {
       id = parseInt(id, 10);
@@ -1282,7 +1323,6 @@
 
 
     hostAction: function(subresource) {
-      console.info('SC router host', this.host.get('username'), subresource);
       if (subresource === 'favorites' || subresource === 'tracks') {
 
       }
@@ -1292,7 +1332,6 @@
     },
     
     usersAction: function(id, subresource) {
-      console.info('SC router guest', id, subresource);
       var user = this.guest;
       this.setScope('user');
 
@@ -1304,7 +1343,6 @@
 
         user.fetch({
           success: function() {
-            console.info('guest user loaded', user);
             if (subresource) {
               user.fetch({
                 subresource: subresource
@@ -1323,7 +1361,6 @@
 
     scConnect: function() {
       var router = this;
-      console.info('connecting to SoundCloud', !!connected);
       if (connected) {
         return;
       }
@@ -1346,7 +1383,6 @@
       var router = this;
 
       SC.get('/me', function(info) {
-        console.info('connected', info.username);
 
         router.guest.set(router.host.toJSON());
         router.host.set(info);
@@ -1381,7 +1417,7 @@
       var router = this;
       router.el = options.el;
       router.$el = $(router.el);
-      router.routePrefix = options.routePrefix;
+      router.routePrefix = options.routePrefix || '';
 
       if (!options.hostpermalink) {
         throw new Error('A `hostpermalink` option must be set.');
@@ -1415,7 +1451,7 @@
 
       SC.initialize({
         client_id:    options.clientid,
-        redirect_uri: options.callbackurl,
+        redirect_uri: options.callbackurl
       });
 
       router.localPlaylist = new LocalPlaylist([], {
@@ -1423,6 +1459,13 @@
       
       router.host = new SCUser({
         permalink: options.hostpermalink
+      });
+      router.listenTo(router.host, 'change:favorites', function(host, info) {
+        // console.info('router.host favorites changed', arguments);
+        if (!router.localPlaylist.length) {
+          router.localPlaylist.add(host.favorites.toJSON());
+          router.localPlaylist.sync('update', router.localPlaylist, {});
+        }
       });
 
 
@@ -1441,17 +1484,6 @@
         collection: router.localPlaylist,
         router:     router
       });
-      router.player.render();
-
-      router.localPlaylist.on('change', function(inst, info) {
-        router
-          .player
-            .render();
-      });
-      router.localPlaylist.fetch();
-
-      router.host.fetch({});
-      // router.host.fetch({subresource: 'favorites'});
 
       router.guest = new SCUser({});
 
@@ -1461,6 +1493,9 @@
         router:     router
       });
       router.user.render();
+
+      router.localPlaylist.fetch();
+      router.host.fetch({});
     }
   },
   {

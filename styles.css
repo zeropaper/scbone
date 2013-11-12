@@ -1292,171 +1292,201 @@ blockquote p {
 
 /* '' */
 /* line 62, scss/_icons.scss */
+.icon-cancel:before {
+  content: '\e829'; }
+
+/* '' */
+/* line 63, scss/_icons.scss */
 .icon-clock:before {
   content: '\e81d'; }
 
 /* '' */
-/* line 63, scss/_icons.scss */
+/* line 64, scss/_icons.scss */
 .icon-comment-empty:before {
   content: '\e815'; }
 
 /* '' */
-/* line 64, scss/_icons.scss */
+/* line 65, scss/_icons.scss */
 .icon-comment:before {
   content: '\e814'; }
 
 /* '' */
-/* line 65, scss/_icons.scss */
+/* line 66, scss/_icons.scss */
 .icon-download-cloud:before {
   content: '\e81a'; }
 
 /* '' */
-/* line 66, scss/_icons.scss */
+/* line 67, scss/_icons.scss */
 .icon-facebook:before {
   content: '\e807'; }
 
 /* '' */
-/* line 67, scss/_icons.scss */
+/* line 68, scss/_icons.scss */
 .icon-folder-open:before {
   content: '\e826'; }
 
 /* '' */
-/* line 68, scss/_icons.scss */
+/* line 69, scss/_icons.scss */
+.icon-forward:before {
+  content: '\e827'; }
+
+/* '' */
+/* line 70, scss/_icons.scss */
 .icon-github:before {
   content: '\e809'; }
 
 /* '' */
-/* line 69, scss/_icons.scss */
+/* line 71, scss/_icons.scss */
 .icon-gplus:before {
   content: '\e808'; }
 
 /* '' */
-/* line 70, scss/_icons.scss */
+/* line 72, scss/_icons.scss */
 .icon-heart-empty:before {
   content: '\e802'; }
 
 /* '' */
-/* line 71, scss/_icons.scss */
+/* line 73, scss/_icons.scss */
 .icon-heart:before {
   content: '\e801'; }
 
 /* '' */
-/* line 72, scss/_icons.scss */
+/* line 74, scss/_icons.scss */
 .icon-link:before {
   content: '\e80e'; }
 
 /* '' */
-/* line 73, scss/_icons.scss */
+/* line 75, scss/_icons.scss */
 .icon-linkedin:before {
   content: '\e806'; }
 
 /* '' */
-/* line 74, scss/_icons.scss */
+/* line 76, scss/_icons.scss */
 .icon-location:before {
   content: '\e816'; }
 
 /* '' */
-/* line 75, scss/_icons.scss */
+/* line 77, scss/_icons.scss */
 .icon-mic:before {
   content: '\e824'; }
 
 /* '' */
-/* line 76, scss/_icons.scss */
+/* line 78, scss/_icons.scss */
+.icon-minus:before {
+  content: '\e82c'; }
+
+/* '' */
+/* line 79, scss/_icons.scss */
 .icon-music:before {
   content: '\e825'; }
 
 /* '' */
-/* line 77, scss/_icons.scss */
+/* line 80, scss/_icons.scss */
+.icon-ok:before {
+  content: '\e82a'; }
+
+/* '' */
+/* line 81, scss/_icons.scss */
 .icon-pause:before {
   content: '\e81f'; }
 
 /* '' */
-/* line 78, scss/_icons.scss */
+/* line 82, scss/_icons.scss */
+.icon-plus:before {
+  content: '\e82b'; }
+
+/* '' */
+/* line 83, scss/_icons.scss */
+.icon-reply:before {
+  content: '\e828'; }
+
+/* '' */
+/* line 84, scss/_icons.scss */
 .icon-spinner:before {
   content: '\e800'; }
 
 /* '' */
-/* line 79, scss/_icons.scss */
+/* line 85, scss/_icons.scss */
 .icon-stackoverflow:before {
   content: '\e80a'; }
 
 /* '' */
-/* line 80, scss/_icons.scss */
+/* line 86, scss/_icons.scss */
 .icon-stop:before {
   content: '\e81e'; }
 
 /* '' */
-/* line 81, scss/_icons.scss */
+/* line 87, scss/_icons.scss */
 .icon-tag:before {
   content: '\e818'; }
 
 /* '' */
-/* line 82, scss/_icons.scss */
+/* line 88, scss/_icons.scss */
 .icon-tags:before {
   content: '\e817'; }
 
 /* '' */
-/* line 83, scss/_icons.scss */
+/* line 89, scss/_icons.scss */
 .icon-to-end-alt:before {
   content: '\e822'; }
 
 /* '' */
-/* line 84, scss/_icons.scss */
+/* line 90, scss/_icons.scss */
 .icon-to-end:before {
   content: '\e820'; }
 
 /* '' */
-/* line 85, scss/_icons.scss */
+/* line 91, scss/_icons.scss */
 .icon-to-start-alt:before {
   content: '\e823'; }
 
 /* '' */
-/* line 86, scss/_icons.scss */
+/* line 92, scss/_icons.scss */
 .icon-to-start:before {
   content: '\e821'; }
 
 /* '' */
-/* line 87, scss/_icons.scss */
+/* line 93, scss/_icons.scss */
 .icon-tumblr:before {
   content: '\e803'; }
 
 /* '' */
-/* line 88, scss/_icons.scss */
+/* line 94, scss/_icons.scss */
 .icon-twitter:before {
   content: '\e804'; }
 
 /* '' */
-/* line 89, scss/_icons.scss */
+/* line 95, scss/_icons.scss */
 .icon-user:before {
   content: '\e813'; }
 
 /* '' */
-/* line 90, scss/_icons.scss */
+/* line 96, scss/_icons.scss */
 .icon-users:before {
   content: '\e812'; }
 
 /* '' */
-/* line 91, scss/_icons.scss */
+/* line 97, scss/_icons.scss */
 .icon-videocam:before {
   content: '\e819'; }
 
 /* '' */
-/* line 92, scss/_icons.scss */
+/* line 98, scss/_icons.scss */
 .icon-volume-down:before {
   content: '\e810'; }
 
 /* '' */
-/* line 93, scss/_icons.scss */
+/* line 99, scss/_icons.scss */
 .icon-volume-off:before {
   content: '\e80f'; }
 
 /* '' */
-/* line 94, scss/_icons.scss */
+/* line 100, scss/_icons.scss */
 .icon-volume-up:before {
   content: '\e811'; }
 
 /* '' */
-/* line 95, scss/_icons.scss */
+/* line 101, scss/_icons.scss */
 .icon-xing:before {
   content: '\e805'; }
 
@@ -1464,7 +1494,7 @@ blockquote p {
 /*
    Animation example, for spinners
 */
-/* line 127, scss/_icons.scss */
+/* line 130, scss/_icons.scss */
 .animate-spin {
   -moz-animation: spin 2s infinite linear;
   -o-animation: spin 2s infinite linear;
@@ -1473,14 +1503,14 @@ blockquote p {
   display: inline-block; }
 
 @-moz-keyframes spin {
-  /* line 135, scss/_icons.scss */
+  /* line 138, scss/_icons.scss */
   0% {
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg); }
 
-  /* line 142, scss/_icons.scss */
+  /* line 145, scss/_icons.scss */
   100% {
     -moz-transform: rotate(359deg);
     -o-transform: rotate(359deg);
@@ -1488,14 +1518,14 @@ blockquote p {
     transform: rotate(359deg); } }
 
 @-webkit-keyframes spin {
-  /* line 150, scss/_icons.scss */
+  /* line 153, scss/_icons.scss */
   0% {
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg); }
 
-  /* line 157, scss/_icons.scss */
+  /* line 160, scss/_icons.scss */
   100% {
     -moz-transform: rotate(359deg);
     -o-transform: rotate(359deg);
@@ -1503,14 +1533,14 @@ blockquote p {
     transform: rotate(359deg); } }
 
 @-o-keyframes spin {
-  /* line 165, scss/_icons.scss */
+  /* line 168, scss/_icons.scss */
   0% {
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg); }
 
-  /* line 172, scss/_icons.scss */
+  /* line 175, scss/_icons.scss */
   100% {
     -moz-transform: rotate(359deg);
     -o-transform: rotate(359deg);
@@ -1518,14 +1548,14 @@ blockquote p {
     transform: rotate(359deg); } }
 
 @-ms-keyframes spin {
-  /* line 180, scss/_icons.scss */
+  /* line 183, scss/_icons.scss */
   0% {
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg); }
 
-  /* line 187, scss/_icons.scss */
+  /* line 190, scss/_icons.scss */
   100% {
     -moz-transform: rotate(359deg);
     -o-transform: rotate(359deg);
@@ -1533,14 +1563,14 @@ blockquote p {
     transform: rotate(359deg); } }
 
 @keyframes spin {
-  /* line 195, scss/_icons.scss */
+  /* line 198, scss/_icons.scss */
   0% {
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg); }
 
-  /* line 202, scss/_icons.scss */
+  /* line 205, scss/_icons.scss */
   100% {
     -moz-transform: rotate(359deg);
     -o-transform: rotate(359deg);
@@ -1709,15 +1739,16 @@ body {
     height: 100px; }
   /* line 253, scss/styles.scss */
   .scbone .player .progress {
+    cursor: pointer;
     top: 54px; }
-  /* line 258, scss/styles.scss */
+  /* line 259, scss/styles.scss */
   .scbone .player .controls,
   .scbone .player .logos {
     height: 46px; }
-  /* line 262, scss/styles.scss */
+  /* line 263, scss/styles.scss */
   .scbone .player .controls {
     top: 0; }
-    /* line 264, scss/styles.scss */
+    /* line 265, scss/styles.scss */
     .scbone .player .controls button {
       position: relative;
       width: 50%;
@@ -1726,18 +1757,24 @@ body {
       background: none;
       color: #efd96a;
       border: none; }
-  /* line 275, scss/styles.scss */
+  /* line 276, scss/styles.scss */
   .scbone .player .logos {
-    top: 162px; }
-  /* line 279, scss/styles.scss */
+    top: 162px;
+    text-align: center; }
+  /* line 281, scss/styles.scss */
   .scbone .player .tracks {
     position: relative;
     left: 108px;
     width: 632px;
     max-height: 424px;
     overflow: auto; }
+  /* line 290, scss/styles.scss */
+  .scbone .player .js-add,
+  .scbone .player .js-remove {
+    color: #efd96a;
+    cursor: pointer; }
 
-/* line 289, scss/styles.scss */
+/* line 297, scss/styles.scss */
 .scbone .tracks li {
   background-color: black;
   margin-bottom: 8px;
@@ -1745,68 +1782,68 @@ body {
   position: relative;
   height: 46px;
   padding: 0 8px;
-  -webkit-transition: padding-left 0.3s, height 0.3s;
-  -moz-transition: padding-left 0.3s, height 0.3s;
-  -o-transition: padding-left 0.3s, height 0.3s;
-  transition: padding-left 0.3s, height 0.3s; }
-  /* line 300, scss/styles.scss */
+  -webkit-transition: padding-right 0.3s, height 0.3s;
+  -moz-transition: padding-right 0.3s, height 0.3s;
+  -o-transition: padding-right 0.3s, height 0.3s;
+  transition: padding-right 0.3s, height 0.3s; }
+  /* line 308, scss/styles.scss */
   .scbone .tracks li:hover {
-    padding: 0 8px 0 108px;
+    padding: 0 108px 0 8px;
     height: 100px; }
-    /* line 303, scss/styles.scss */
+    /* line 311, scss/styles.scss */
     .scbone .tracks li:hover .artwork {
       height: 100px;
       opacity: 1; }
-  /* line 310, scss/styles.scss */
+  /* line 318, scss/styles.scss */
   .scbone .tracks li.no-artwork, .scbone .tracks li.current {
     padding: 0 8px; }
-  /* line 313, scss/styles.scss */
+  /* line 321, scss/styles.scss */
   .scbone .tracks li.current {
     height: 100px;
     background-color: #333333; }
-    /* line 316, scss/styles.scss */
+    /* line 324, scss/styles.scss */
     .scbone .tracks li.current .artwork {
       display: none; }
-/* line 322, scss/styles.scss */
+/* line 330, scss/styles.scss */
 .scbone .tracks .artwork {
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   opacity: 0;
   height: 46px;
   -webkit-transition: opacity 0.3s, height 0.3s;
   -moz-transition: opacity 0.3s, height 0.3s;
   -o-transition: opacity 0.3s, height 0.3s;
   transition: opacity 0.3s, height 0.3s; }
-/* line 331, scss/styles.scss */
+/* line 339, scss/styles.scss */
 .scbone .tracks .title {
   padding: 8px 0;
   min-height: 46px;
   display: block; }
-/* line 338, scss/styles.scss */
+/* line 346, scss/styles.scss */
 .scbone .tracks .duration,
 .scbone .tracks .likes {
   display: inline-block;
   min-width: 46px;
   font-size: small; }
 
-/* line 356, scss/styles.scss */
+/* line 364, scss/styles.scss */
 .scbone.user .player, .scbone.group .player {
   width: 100px;
   max-height: 208px;
   overflow: hidden; }
-  /* line 360, scss/styles.scss */
+  /* line 368, scss/styles.scss */
   .scbone.user .player:hover, .scbone.group .player:hover {
     z-index: 99;
     max-height: 424px;
     width: 740px; }
-/* line 368, scss/styles.scss */
+/* line 376, scss/styles.scss */
 .scbone.user .scope.group {
   display: none; }
-/* line 373, scss/styles.scss */
+/* line 381, scss/styles.scss */
 .scbone.group .scope.user {
   display: none; }
-/* line 380, scss/styles.scss */
+/* line 388, scss/styles.scss */
 .scbone.player .scope.user,
 .scbone.player .scope.group, .scbone.tracks .scope.user,
 .scbone.tracks .scope.group {
