@@ -45,7 +45,6 @@
       localStorage.setItem('scbone-access-token', value);
     }
     var val = localStorage.getItem('scbone-access-token');
-    console.info('scAccessToken', value, val);
     return val;
   }
 
@@ -62,9 +61,7 @@
       'connect':                        'scConnect'
     },
 
-    appStart: function() {
-      // console.info('appStart');
-    },
+    appStart: function() {},
 
     playTrack: function(id) {
       id = parseInt(id, 10);
@@ -86,7 +83,6 @@
 
 
     hostAction: function(subresource) {
-      console.info('SC router host', this.host.get('username'), subresource);
       if (subresource === 'favorites' || subresource === 'tracks') {
 
       }
@@ -96,7 +92,6 @@
     },
     
     usersAction: function(id, subresource) {
-      console.info('SC router guest', id, subresource);
       var user = this.guest;
       this.setScope('user');
 
@@ -108,7 +103,6 @@
 
         user.fetch({
           success: function() {
-            console.info('guest user loaded', user);
             if (subresource) {
               user.fetch({
                 subresource: subresource
@@ -127,7 +121,6 @@
 
     scConnect: function() {
       var router = this;
-      console.info('connecting to SoundCloud', !!connected);
       if (connected) {
         return;
       }
@@ -150,7 +143,6 @@
       var router = this;
 
       SC.get('/me', function(info) {
-        console.info('connected', info.username);
 
         router.guest.set(router.host.toJSON());
         router.host.set(info);

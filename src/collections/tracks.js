@@ -24,7 +24,6 @@
     
     setCurrent: function(index) {
       index = parseInt(index || 0, 10);
-      console.info('setCurrent index', index);
       
       if (this.current === index && index !== false) {
         return this;
@@ -60,7 +59,6 @@
           index = i;
         }
       });
-      console.info('index for '+ id, index);
       return index;
     },
 
