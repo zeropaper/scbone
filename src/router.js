@@ -219,7 +219,7 @@
 
       SC.initialize({
         client_id:    options.clientid,
-        redirect_uri: options.callbackurl,
+        redirect_uri: options.callbackurl
       });
 
       router.localPlaylist = new LocalPlaylist([], {
@@ -227,6 +227,13 @@
       
       router.host = new SCUser({
         permalink: options.hostpermalink
+      });
+      router.listenTo(router.host, 'change:favorites', function(host, info) {
+        // console.info('router.host favorites changed', arguments);
+        if (!router.localPlaylist.length) {
+          router.localPlaylist.add(host.favorites.toJSON());
+          router.localPlaylist.sync('update', router.localPlaylist, {});
+        }
       });
 
 
@@ -245,17 +252,6 @@
         collection: router.localPlaylist,
         router:     router
       });
-      router.player.render();
-
-      router.localPlaylist.on('change', function(inst, info) {
-        router
-          .player
-            .render();
-      });
-      router.localPlaylist.fetch();
-
-      router.host.fetch({});
-      // router.host.fetch({subresource: 'favorites'});
 
       router.guest = new SCUser({});
 
@@ -265,6 +261,9 @@
         router:     router
       });
       router.user.render();
+
+      router.localPlaylist.fetch();
+      router.host.fetch({});
     }
   },
   {

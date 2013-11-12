@@ -182,7 +182,7 @@
     // '<section class="list users"><ul></ul></section>',
     // '<section class="list comments"><ul></ul></section>',
     // '<section class="list groups"><ul></ul></section>',
-    '<section class="list tracks"><ul></ul></section>',
+    '<section class="list tracks"><ol></ol></section>',
     ''
   ].join('\n'));
 

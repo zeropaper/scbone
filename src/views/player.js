@@ -3,7 +3,7 @@
   /* global define: true, module: true */
   // CommonJS
   if(typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./../templates'), require('moment'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./../templates'), require('./tracks'), require('moment'));
   }
   // AMD
   else if(typeof define === 'function' && define.amd) {
@@ -11,10 +11,11 @@
       'underscore',
       'backbone',
       './../templates',
+      './tracks',
       'moment'
     ], factory);
   }
-}(function(_, Backbone, templates) {
+}(function(_, Backbone, templates, SCTracks) {
   'use strict';
   var $ = Backbone.$;
 
@@ -34,7 +35,11 @@
       view.sound = null;
       view.trackId = null;
 
-      view.listenTo(view.collection, 'change', view.render);
+      view.listenTo(view.collection, 'all', function(evName) {
+        console.info('player.collection event', evName);
+      });
+
+      // view.collection.on('change reset', view.tracks.render);
       view.listenTo(view.collection, 'current-track', function(collection, index, trackId) {
         console.info('current-track event on collection', trackId, index);
 
@@ -111,10 +116,13 @@
       view.$('.progress').append(view.$canvas);
       view.ctx = view.$canvas[0].getContext('2d');
 
-      view.$tracks = this.$('.tracks ol');
-
-      view.trackTemplate = view.$tracks.html();
-      view.$tracks.empty();
+      view.tracks = new SCTracks({
+        el: view.$('.tracks ol')[0],
+        collection: view.collection,
+        router: view.router
+      });
+      view.tracks.render();
+      console.info('view.tracks', view.el, view.tracks.el, view.tracks);
     },
 
     playPause: function(ev) {
@@ -327,13 +335,15 @@
       options = options || {};
       var view = this;
       
-      var collection = options.collection || view.collection;
-      var tracks = collection.map(function(track, t) {
-        var data = track.toJSON();
-        data.routePrefix = view.router.routePrefix;
-        return templates['SCBone/trackItem'](data);
-      });
-      view.$('.tracks ul').html(tracks.join(''));
+      // var collection = options.collection || view.collection;
+      // var tracks = collection.map(function(track, t) {
+      //   var data = track.toJSON();
+      //   data.routePrefix = view.router.routePrefix;
+      //   return templates['SCBone/trackItem'](data);
+      // });
+      // view.$('.tracks ul').html(tracks.join(''));
+      console.info('rendering player tracks');
+      view.tracks.render();
 
       return view;
     },

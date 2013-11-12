@@ -18,7 +18,7 @@
 
   // var $ = Backbone.$;
   var SCUser = Backbone.View.extend({
-    tagName: 'ul',
+    tagName: 'ol',
     className: 'tracks-list',
     
     events: {
@@ -26,7 +26,7 @@
 
     initialize: function(options) {
       this.router = options.router;
-      this.listenTo(this.collection, 'change', this.render);
+      this.listenTo(this.collection, 'change reset', this.render);
     },
 
     render: function(options) {
