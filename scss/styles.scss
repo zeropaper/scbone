@@ -251,6 +251,7 @@ $host-width: 2;
   }
 
   .progress {
+    cursor: pointer;
     top: block(0.5, $gutter);
   }
 
@@ -274,6 +275,7 @@ $host-width: 2;
 
   .logos {
     top: block(1.5, $gutter);
+    text-align: center;
   }
 
   .tracks {
@@ -282,6 +284,12 @@ $host-width: 2;
     width: block($total-width - ($host-width + 1), 0 - $gutter);
     max-height: block(4);
     overflow: auto;
+  }
+
+  .js-add,
+  .js-remove {
+    color: $primary-color;
+    cursor: pointer;
   }
 }
 
@@ -295,10 +303,10 @@ $host-width: 2;
     height: block(0.5);
     padding: 0 $gutter;
 
-    @include transition(padding-left 0.3s, height 0.3s);
+    @include transition(padding-right 0.3s, height 0.3s);
 
     &:hover {
-      padding: 0 $gutter 0 block(1, $gutter);
+      padding: 0 block(1, $gutter) 0 $gutter;
       height: block(1);
       .artwork {
         height: block(1);
@@ -322,7 +330,7 @@ $host-width: 2;
   .artwork {
     position: absolute;
     top: 0;
-    left: 0;
+    right: 0;
     opacity: 0;
     height: block(0.5);
     @include transition(opacity 0.3s, height 0.3s);
