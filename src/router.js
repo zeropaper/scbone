@@ -185,7 +185,7 @@
       var router = this;
       router.el = options.el;
       router.$el = $(router.el);
-      router.routePrefix = options.routePrefix;
+      router.routePrefix = options.routePrefix || '';
 
       if (!options.hostpermalink) {
         throw new Error('A `hostpermalink` option must be set.');
