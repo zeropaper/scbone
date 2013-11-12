@@ -29,29 +29,12 @@
   var LocalPlaylist = TracksCollection.extend({
     sync: mixins ? mixins.localSync('local-playlist') : noop,
     model: LocalTrackModel,
-    
-    // saveOrder: function() {
-    //   if (mixins) {
-    //     localStorage.setItem('local-playlist-sorting', this.pluck('id').join(','));
-    //   }
-    //   return this;
-    // },
-    
-    // loadOrder: function() {
-    //   if (mixins) {
-    //     localStorage.getItem('local-playlist-sorting').split(',');
-    //   }
-    //   return this;
-    // },
 
     initialize: function() {
-      // this.on('add remove', this.saveOrder);
-      this.on('all', function(evName) {
-        console.info('evName on local playlist', evName);
-      });
-
-      this.on('sort', function() {
-        
+      this.on('sort add remove', function() {
+        this.sync('update', this, {
+          silent: true
+        });
       });
 
       this.sync('read', this, {});
