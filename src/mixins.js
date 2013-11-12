@@ -89,9 +89,9 @@
       var success = options.success || noop;
       var error = options.error || noop;
       var isModel = instance instanceof Backbone.Model;
-      
+
       var id = scope +':';
-      id = id + isModel ? (instance.id ? instance.id : '#'+ instance.cid) : 'keys';
+      id = id + (isModel ? (instance.id ? instance.id : '#'+ instance.cid) : 'keys');
 
       switch (method) {
         case 'create':
@@ -102,6 +102,7 @@
           }
           else {
             localStorage.setItem(id, _.keys(instance._byId).join(','));
+            instance.each(function(model) {model.sync('update', model, {});});
           }
           break;
         case 'read':
