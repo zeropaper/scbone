@@ -46,8 +46,8 @@ To use them:
 
 1. install `node` (if needed)
 2. install `npm` (if needed)
-3. install `grunt-cli`, `bower` (if needed)   
-   `npm install -g grunt-cli bower`
+3. install `grunt-cli`, `bower` , `testem` (if needed)   
+   `npm install -g grunt-cli bower testem`
 4. clone the repository and go in its directory
 5. install the dependencies   
    `npm install` `bower install`
@@ -62,9 +62,11 @@ The player is based on [backbone.js](http://backbone.org) and uses [require.js](
 Testing
 -------
 
-I perfectly know that it isn't the way to do it, it's a personal project, but I'll write some tests soon.
+A few tests are already written (more are comming).
+You can run them using the `testem` command from the project directory.
 
 License
 -------
 
-This piece of code is licensed under the MIT license (see [LICENSE](https://raw.github.com/zeropaper/scbone/master/LICENSE)).
+This piece of code is licensed under the MIT license
+(see [LICENSE](https://raw.github.com/zeropaper/scbone/master/LICENSE)).
