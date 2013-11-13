@@ -86,12 +86,18 @@
   // ```
   function localSync(scope) {
     return function(method, instance, options) {
+      options       = options || {};
       var success = options.success || noop;
       var error = options.error || noop;
       var isModel = instance instanceof Backbone.Model;
-
+      var idAttribute = isModel ?
+                        instance.idAttribute :
+                        instance.model.prototype.idAttribute;
+      var ids;
       var id = scope +':';
       id = id + (isModel ? (instance.id ? instance.id : '#'+ instance.cid) : 'keys');
+
+      // console.info('localSync', method, id, isModel);
 
       switch (method) {
         case 'create':
@@ -101,8 +107,12 @@
             localStorage.setItem(id, JSON.stringify(instance.toJSON()));
           }
           else {
-            localStorage.setItem(id, _.keys(instance._byId).join(','));
-            instance.each(function(model) {model.sync('update', model, {});});
+            ids = instance.pluck(idAttribute).join(',');
+            localStorage.setItem(id, ids);
+
+            instance.each(function(model) {
+              model.sync('update', model, {});
+            });
           }
           break;
         case 'read':
@@ -110,8 +120,7 @@
             success(JSON.parse(localStorage.getItem(id)));
           }
           else {
-            var idAttribute = instance.model.prototype.idAttribute;
-            var ids = (localStorage.getItem(id) || '').split(',');
+            ids = (localStorage.getItem(id) || '').split(',');
             var models = _.compact(_.map(ids, function(mId) {
               // exclude models who have no ID
               if (mId && mId.substr(0, 1) !== 'c') {
@@ -119,7 +128,7 @@
               }
             }));
 
-            instance.reset(models);
+            instance.reset(models, {silent: true});
             // instance.each(function(model) {
             //   model.set({});
             // });
@@ -127,7 +136,7 @@
           }
           break;
         case 'delete':
-
+          localStorage.removeItem(id);
           break;
       }
     };
