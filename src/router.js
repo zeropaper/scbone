@@ -48,7 +48,8 @@
     return val;
   }
 
-  var scopes = 'track user comment group followers followings tracks users comments groups host-tracks host-users';
+  var _scope = 'host';
+  var _scopes = 'track user comment group followers followings tracks users comments groups host-tracks host-users';
 
   var SCBone = Backbone.Router.extend({
     routePrefix: 'step/sounds',
@@ -93,7 +94,7 @@
     
     usersAction: function(id, subresource) {
       var user = this.guest;
-      this.setScope('user');
+      this.scope('user');
 
       if (user.id !== id) {
         user.attributes = {};
@@ -162,15 +163,19 @@
     },
 
     scIsConnected: function() {
-      return !!scAccessToken();
+      return !!SC.accessToken();
     },
 
-    setScope: function(scope) {
-      this.$el.removeClass(scopes);
-      if (scope) {
-        this.$el.addClass(scope);
+    scope: function(scope) {
+      // scope = scope || 'host';
+      if (scope && _scope !== scope) {
+        _scope = scope;
+        this.$el.removeClass(_scopes);
+        if (scope) {
+          this.$el.addClass(scope);
+        }
       }
-      return this;
+      return _scope;
     },
 
     initialize: function(options) {
@@ -179,12 +184,18 @@
       router.$el = $(router.el);
       router.routePrefix = options.routePrefix || '';
 
+      router.$el.addClass(_scope);
+
       if (!options.hostpermalink) {
         throw new Error('A `hostpermalink` option must be set.');
       }
 
       if (!options.el) {
         throw new Error('A `el` (DOM element) option must be set.');
+      }
+
+      if (!options.clientid) {
+        throw new Error('A `clientid` option must be set.');
       }
 
       var linksSelector = '[href^="/"]';
