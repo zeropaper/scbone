@@ -156,12 +156,12 @@
 
   templates['SCBone/app'] = _.template([
     '',
-    '<div class="host-sc-profile host"></div>',
+    '<div class="host"></div>',
     '<div class="scope player"></div>',
-    '<div class="scope user"></div>',
-    '<div class="scope group"></div>',
-    '<div class="scope host-tracks"></div>',
-    '<div class="scope host-users"></div>',
+    // '<div class="scope user"></div>',
+    // '<div class="scope group"></div>',
+    '<ol class="scope tracks"></ol>',
+    '<ol class="scope users"></ol>',
     ''
   ].join('\n'));
 
@@ -213,19 +213,23 @@
 
       '<div class="track-info <%- sharing %>">',
         '<div class="title">',
-          '<% if (removeable) { %>',
-          '<i class="icon-minus js-remove"></i>',
-          '<% } %>',
           '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
         '</div>',
         
+
         '<span class="duration">',
           '<i class="icon-clock"></i>',
           '<%- moment(duration).format("m:s") %>',
         '</span>',
 
         
-        '<span class="likes"',
+        '<div class="actions"><% if (removeable) { %>',
+        '<i class="icon-minus" data-action="remove" data-id="<%- id %>"></i>',
+        '<% } else { %>',
+        '<i class="icon-plus" data-action="add" data-id="<%- id %>"></i>',
+        '<% } %></div>',
+        
+        '<span class="likes" data-action="like" data-id="<%- id %>"',
         '<%= (user_liked ? " title=\\"You liked it.\\"" : "") %>',
         '>',
           '<i class="icon-heart<%- (user_liked ? "" : "-empty") %>"></i>',
@@ -238,9 +242,6 @@
 
         '<% if (sharing === "private") { %>',
         '<% } %>',
-        // '<span class="user">',
-        //   '<span class="full-name"><%- user.full_name %></span>',
-        // '</span>',
       '</div>',
 
     '</li>',
