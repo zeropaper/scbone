@@ -22,7 +22,9 @@
     },
 
     initialize: function(options) {
-      this.router = options.router;
+      options = options || {};
+      this.routePrefix = options.routePrefix || {};
+      // this.router = options.router;
       this.listenTo(this.model, 'change', this.render);
     },
 
@@ -31,7 +33,7 @@
       // only render if we have a loaded resource
       if (this.model.id) {
         var data = this.model.toJSON();
-        data.routePrefix = this.router.routePrefix;
+        data.routePrefix = this.routePrefix;
         html = templates['SCBone/user'](data);
       }
       this.$el.html(html);

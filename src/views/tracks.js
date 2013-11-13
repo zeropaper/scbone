@@ -27,7 +27,9 @@
     },
 
     initialize: function(options) {
-      this.router = options.router;
+      options = options || {};
+      this.routePrefix = options.routePrefix;
+      // this.router = options.router;
       this.listenTo(this.collection, 'change reset add remove', this.render);
     },
 
@@ -39,7 +41,7 @@
       var collection = options.collection || view.collection;
       var tracks = collection.map(function(track, t) {
         var data = track.toJSON();
-        data.routePrefix = view.router.routePrefix;
+        data.routePrefix = view.routePrefix;
         data.removeable = removeable;
         return templates['SCBone/trackItem'](data);
       });

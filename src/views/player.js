@@ -32,7 +32,9 @@
 
     initialize: function(options) {
       var view = this;
-      view.router = options.router;
+      options = options || {};
+      view.routePrefix = options.routePrefix || '';
+
       view.sound = null;
       view.trackId = null;
 
@@ -103,7 +105,7 @@
 
       view.$el.html(templates['SCBone/player']({
         currentTrack: {},
-        routePrefix: this.router.routePrefix
+        routePrefix: this.routePrefix
       }));
 
       view.$canvas = $('<canvas />');
@@ -113,7 +115,7 @@
       view.tracks = new SCTracks({
         el: view.$('.tracks ol')[0],
         collection: view.collection,
-        router: view.router
+        routePrefix: view.routeprefix
       });
       view.tracks.render();
     },
@@ -319,7 +321,7 @@
 
       this.$('.controls').html(templates['SCBone/controls']({
         currentTrack: model ? model.toJSON() : {},
-        routePrefix: this.router.routePrefix
+        routePrefix: this.routePrefix
       }));
       this.drawProgress();
 
@@ -333,7 +335,7 @@
     tracksRender: function(options) {
       options = options || {};
       var view = this;
-      
+
       view.tracks.render();
 
       return view;
@@ -346,7 +348,7 @@
       if (options.collection) {
         var users = options.collection.map(function(user, t) {
           var data = user.toJSON();
-          data.routePrefix = view.router.routePrefix;
+          data.routePrefix = view.routePrefix;
           return templates['SCBone/userItem'](data);
         });
         view.$('.users ul').html(users.join(''));
@@ -362,7 +364,7 @@
     //   var data = {};
     //   if (track) {
     //     data = track.toJSON();
-    //     data.routePrefix = view.router.routePrefix;
+    //     data.routePrefix = view.routePrefix;
     //     html = templates['SCBone/track'](data);
     //   }
     //   view.$('.details').html(html);

@@ -30,14 +30,16 @@
     },
 
     initialize: function(options) {
-      this.router = options.router;
+      options = options || {};
+      this.routePrefix = options.routePrefix || {};
+      // this.router = options.router;
       this.listenTo(this.model, 'change', this.render);
     },
 
     render: function() {
       var data = {};
       data.host = this.model.toJSON();
-      data.routePrefix = this.router.routePrefix;
+      data.routePrefix = this.routePrefix;
       this.$el.html(templates['SCBone/profile'](data));
       return this;
     }
