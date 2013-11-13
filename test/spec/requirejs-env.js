@@ -84,6 +84,7 @@ define([], function() {
             console.info(err.stack);
           });
 
+          // expect(SCBone).to.be.a(window.Backbone.Router);
 
           done();
         }, function(err) {
@@ -114,6 +115,7 @@ define([], function() {
             console.info(err.stack);
           });
 
+          // expect(SCBone).to.be.a(window.Backbone.Router);
 
           done();
         }, function(err) {

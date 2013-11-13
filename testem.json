@@ -1,8 +1,18 @@
 {
   "framework": "mocha",
   "test_page": "index.html",
-  "src_files": [],
+  "src_files": [
+    "src/**/*.js",
+    "test/spec/**/*.js"
+  ],
   "routes": {
+    "/collections":         "src/collections",
+    "/models":              "src/models",
+    "/views":               "src/views",
+    "/mixins.js":           "src/mixins.js",
+    "/router.js":           "src/router.js",
+    "/templates.js":        "src/templates.js",
+    
     "/index.html":          "test/index.html",
     "/require.js":          "bower_components/requirejs/require.js",
     "/backbone.js":         "bower_components/backbone/backbone.js",
@@ -11,6 +21,7 @@
     "/jquery.scrollto.js":  "bower_components/jquery.scrollTo/jquery.scrollTo.js",
     "/expect.js":           "node_modules/expect.js/expect.js",
     "/moment.js":           "bower_components/moment/moment.js",
+
     "/tests.js":            "test/tests.js",
     "/spec":                "test/spec"
   }
