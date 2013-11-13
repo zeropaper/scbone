@@ -570,12 +570,12 @@ define("../bower_components/almond/almond", function(){});
 
   templates['SCBone/app'] = _.template([
     '',
-    '<div class="host-sc-profile host"></div>',
+    '<div class="host"></div>',
     '<div class="scope player"></div>',
-    '<div class="scope user"></div>',
-    '<div class="scope group"></div>',
-    '<div class="scope host-tracks"></div>',
-    '<div class="scope host-users"></div>',
+    // '<div class="scope user"></div>',
+    // '<div class="scope group"></div>',
+    '<ol class="scope tracks"></ol>',
+    '<ol class="scope users"></ol>',
     ''
   ].join('\n'));
 
@@ -637,9 +637,11 @@ define("../bower_components/almond/almond", function(){});
         '</span>',
 
         
-        '<% if (removeable) { %>',
+        '<div class="actions"><% if (removeable) { %>',
         '<i class="icon-minus" data-action="remove" data-id="<%- id %>"></i>',
-        '<% } %>',
+        '<% } else { %>',
+        '<i class="icon-plus" data-action="add" data-id="<%- id %>"></i>',
+        '<% } %></div>',
         
         '<span class="likes" data-action="like" data-id="<%- id %>"',
         '<%= (user_liked ? " title=\\"You liked it.\\"" : "") %>',
@@ -821,12 +823,18 @@ define("../bower_components/almond/almond", function(){});
   // ```
   function localSync(scope) {
     return function(method, instance, options) {
+      options       = options || {};
       var success = options.success || noop;
       var error = options.error || noop;
       var isModel = instance instanceof Backbone.Model;
-
+      var idAttribute = isModel ?
+                        instance.idAttribute :
+                        instance.model.prototype.idAttribute;
+      var ids;
       var id = scope +':';
       id = id + (isModel ? (instance.id ? instance.id : '#'+ instance.cid) : 'keys');
+
+      // console.info('localSync', method, id, isModel);
 
       switch (method) {
         case 'create':
@@ -836,8 +844,12 @@ define("../bower_components/almond/almond", function(){});
             localStorage.setItem(id, JSON.stringify(instance.toJSON()));
           }
           else {
-            localStorage.setItem(id, _.keys(instance._byId).join(','));
-            instance.each(function(model) {model.sync('update', model, {});});
+            ids = instance.pluck(idAttribute).join(',');
+            localStorage.setItem(id, ids);
+
+            instance.each(function(model) {
+              model.sync('update', model, {});
+            });
           }
           break;
         case 'read':
@@ -845,8 +857,7 @@ define("../bower_components/almond/almond", function(){});
             success(JSON.parse(localStorage.getItem(id)));
           }
           else {
-            var idAttribute = instance.model.prototype.idAttribute;
-            var ids = (localStorage.getItem(id) || '').split(',');
+            ids = (localStorage.getItem(id) || '').split(',');
             var models = _.compact(_.map(ids, function(mId) {
               // exclude models who have no ID
               if (mId && mId.substr(0, 1) !== 'c') {
@@ -854,7 +865,7 @@ define("../bower_components/almond/almond", function(){});
               }
             }));
 
-            instance.reset(models);
+            instance.reset(models, {silent: true});
             // instance.each(function(model) {
             //   model.set({});
             // });
@@ -862,7 +873,7 @@ define("../bower_components/almond/almond", function(){});
           }
           break;
         case 'delete':
-
+          localStorage.removeItem(id);
           break;
       }
     };
@@ -1092,13 +1103,23 @@ define("../bower_components/almond/almond", function(){});
     model: LocalTrackModel,
 
     initialize: function() {
-      this.on('sort add remove', function() {
-        this.sync('update', this, {
+      this.on('sort add remove reset', function() {
+        this.save({
           silent: true
         });
       });
 
-      this.sync('read', this, {});
+      this.load();
+    },
+
+    save: function(options) {
+      this.sync('update', this, options);
+      return this;
+    },
+
+    load: function(options) {
+      this.sync('read', this, options);
+      return this;
     }
   });
   return LocalPlaylist;
@@ -1136,7 +1157,7 @@ define("../bower_components/almond/almond", function(){});
 
     initialize: function(options) {
       options = options || {};
-      this.routePrefix = options.routePrefix || {};
+      this.routePrefix = options.routePrefix || '';
       // this.router = options.router;
       this.listenTo(this.model, 'change', this.render);
     },
@@ -1172,27 +1193,47 @@ define("../bower_components/almond/almond", function(){});
   
 
   // var $ = Backbone.$;
-  var SCUser = Backbone.View.extend({
+  var SCTracks = Backbone.View.extend({
     tagName: 'ol',
     className: 'tracks-list',
     
     events: {
-
+      'click [data-action="remove"]': 'removeTrack',
+      'click [data-action="add"]': 'addTrack'
     },
 
     initialize: function(options) {
       options = options || {};
+      this.playlist = options.playlist || this.collection;
       this.routePrefix = options.routePrefix;
-      // this.router = options.router;
       this.listenTo(this.collection, 'change reset add remove', this.render);
+    },
+
+    removeTrack: function(ev) {
+      var id = Backbone.$(ev.target).attr('data-id');
+      var model = this.playlist.get(id);
+      if (!!model) {
+        this.playlist.remove(model);
+      }
+      return false;
+    },
+
+    addTrack: function(ev) {
+      var id = Backbone.$(ev.target).attr('data-id');
+      var model = this.collection.get(id);
+      console.info('add track to playlist', id, model, this.playlist !== this.collection);
+      if (!!model) {
+        this.playlist.add(model.toJSON());
+      }
+      return false;
     },
 
     render: function(options) {
       options = options || {};
       var view = this;
-      var removeable = this.collection instanceof LocalPlaylist;
-      // console.info('models are removeable', removeable);
-      var collection = options.collection || view.collection;
+      var collection = view.collection;
+      var removeable = collection instanceof LocalPlaylist;
+
       var tracks = collection.map(function(track, t) {
         var data = track.toJSON();
         data.routePrefix = view.routePrefix;
@@ -1209,7 +1250,7 @@ define("../bower_components/almond/almond", function(){});
     }
   });
 
-  return SCUser;
+  return SCTracks;
 }));
 (function(factory) {
   
@@ -1328,7 +1369,7 @@ define("../bower_components/almond/almond", function(){});
       view.tracks = new SCTracks({
         el: view.$('.tracks ol')[0],
         collection: view.collection,
-        routePrefix: view.routeprefix
+        routePrefix: view.routePrefix
       });
       view.tracks.render();
     },
@@ -1537,52 +1578,10 @@ define("../bower_components/almond/almond", function(){});
         routePrefix: this.routePrefix
       }));
       this.drawProgress();
-
-      if (options.scope && _.isFunction(this[options.scope +'Render'])) {
-        this[options.scope +'Render'](options);
-      }
       
+      this.tracks.render();
       return this;
     },
-
-    tracksRender: function(options) {
-      options = options || {};
-      var view = this;
-
-      view.tracks.render();
-
-      return view;
-    },
-
-    usersRender: function(options) {
-      options = options || {};
-      var view = this;
-
-      if (options.collection) {
-        var users = options.collection.map(function(user, t) {
-          var data = user.toJSON();
-          data.routePrefix = view.routePrefix;
-          return templates['SCBone/userItem'](data);
-        });
-        view.$('.users ul').html(users.join(''));
-      }
-
-      return view;
-    },
-
-    //  renderTrack: function() {
-    //   var view = this;
-    //   var track = view.getCurrent();
-    //   var html = '';
-    //   var data = {};
-    //   if (track) {
-    //     data = track.toJSON();
-    //     data.routePrefix = view.routePrefix;
-    //     html = templates['SCBone/track'](data);
-    //   }
-    //   view.$('.details').html(html);
-    //   return view;
-    // },
 
     modal: function(content) {
       this.$modal = this.$('.modal');
@@ -1672,7 +1671,8 @@ define("../bower_components/almond/almond", function(){});
       require('./collections/tracks'),
       require('./views/profile'),
       require('./templates/player'),
-      require('./templates/user')
+      require('./templates/user'),
+      require('./templates/tracks')
     );
   }
   // AMD
@@ -1687,14 +1687,15 @@ define("../bower_components/almond/almond", function(){});
       './collections/local-playlist',
       './views/profile',
       './views/player',
-      './views/user'
+      './views/user',
+      './views/tracks'
     ], factory);
   }
   // Browser
   else if (typeof _ !== 'undefined' && typeof Backbone !== 'undefined') {
     window.SCBone = factory(_, Backbone);
   }
-}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, LocalPlaylist, SCProfile, SCPlayer, SCUserView) {
+}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, LocalPlaylist, SCProfile, SCPlayer, SCUserView, SCTracksView) {
   var connected;
   var $ = Backbone.$;
   var SCUser = SCUsers.prototype.model;
@@ -1708,8 +1709,8 @@ define("../bower_components/almond/almond", function(){});
     return val;
   }
 
-  var _scope = 'host';
-  var _scopes = 'track user comment group followers followings tracks users comments groups host-tracks host-users';
+  var _scope = 'host-tracks';
+  var _scopes = 'guest-tracks guest-users host-tracks host-users';
 
   var SCBone = Backbone.Router.extend({
     routePrefix: 'step/sounds',
@@ -1744,9 +1745,19 @@ define("../bower_components/almond/almond", function(){});
 
 
     hostAction: function(subresource) {
-      if (subresource === 'favorites' || subresource === 'tracks') {
+      this.host.once('change:'+ subresource, function() {
+        var scope = 'host-tracks';
+        if (subresource === 'followings' || subresource === 'followers') {
+          scope = 'host-users';
+          // this.users.collection.reset(this.host[subresource].toJSON());
+        }
+        else {
+          this.tracks.collection.reset(this.host[subresource].toJSON());
+        }
 
-      }
+        this.scope(scope);
+      }, this);
+
       this.host.fetch({
         subresource: subresource
       });
@@ -1754,7 +1765,21 @@ define("../bower_components/almond/almond", function(){});
     
     usersAction: function(id, subresource) {
       var user = this.guest;
-      this.scope('user');
+
+      if (subresource) {
+        user.once('change:'+ subresource, function() {
+          var scope = 'guest-tracks';
+          if (subresource === 'followings' || subresource === 'followers') {
+            scope = 'guest-users';
+            // this.users.collection.reset(user[subresource].toJSON());
+          }
+          else {
+            this.tracks.collection.reset(user[subresource].toJSON());
+          }
+
+          this.scope(scope);
+        }, this);
+      }
 
       if (user.id !== id) {
         user.attributes = {};
@@ -1772,12 +1797,11 @@ define("../bower_components/almond/almond", function(){});
           }
         });
       }
-      else if(subresource) {
+      else if (subresource) {
         user.fetch({
           subresource: subresource
         });
       }
-
     },
 
     scConnect: function() {
@@ -1876,10 +1900,6 @@ define("../bower_components/almond/almond", function(){});
         return false;
       });
 
-      // this.on('all', function() {
-      //   // console.info('SC router event', arguments);
-      // });
-
       SC.initialize({
         client_id:    options.clientid,
         redirect_uri: options.callbackurl
@@ -1891,13 +1911,7 @@ define("../bower_components/almond/almond", function(){});
       router.host = new SCUser({
         permalink: options.hostpermalink
       });
-      router.listenTo(router.host, 'change:favorites', function(host, info) {
-        // console.info('router.host favorites changed', arguments);
-        if (!router.localPlaylist.length) {
-          router.localPlaylist.add(host.favorites.toJSON());
-          router.localPlaylist.sync('update', router.localPlaylist, {});
-        }
-      });
+      router.guest = new SCUser({});
 
 
       $(router.el).html(templates['SCBone/app'], {
@@ -1905,7 +1919,7 @@ define("../bower_components/almond/almond", function(){});
       });
       router.profile = new SCProfile({
         model:      router.host,
-        el:         $('.host-sc-profile', options.el)[0],
+        el:         $('.host', options.el)[0],
         router:     router
       });
       router.profile.render();
@@ -1916,7 +1930,13 @@ define("../bower_components/almond/almond", function(){});
         router:     router
       });
 
-      router.guest = new SCUser({});
+      router.tracks = new SCTracksView({
+        el: $('.scope.tracks')[0],
+        collection: new SCTracks(),
+        playlist: router.localPlaylist
+      });
+      // router.users = new SCUserView();
+
 
       router.user = new SCUserView({
         el:         $('.user', options.el)[0],
@@ -1925,22 +1945,38 @@ define("../bower_components/almond/almond", function(){});
       });
       router.user.render();
 
-      router.localPlaylist.fetch();
+      // this.on('all', function() {
+      //   console.info('SC router event', arguments);
+      // });
+      // this.localPlaylist.on('all', function() {
+      //   console.info('SC router.localPlaylist event', arguments);
+      // });
+      // this.host.on('all', function() {
+      //   console.info('SC router.host event', arguments);
+      // });
+      // this.guest.on('all', function() {
+      //   console.info('SC router.guest event', arguments);
+      // });
+
+
       router.host.fetch({});
-    }
-  },
-  {
-    Models: {
-      User:           SCUser,
-      Track:          SCTrack
-    },
-    Collections: {
-      User:           SCUsers,
-      Track:          SCTracks,
-      LocalPlaylist:  LocalPlaylist
-    },
-    Views: {
-      Profile:        SCProfile
+      
+      if (!router.localPlaylist.load().length) {
+        router.host.once('change:favorites', function(host, info) {
+          router.localPlaylist.reset(host.favorites.toJSON(), {
+            silent: true
+          });
+          router.localPlaylist.save();
+          router.player.render();
+        });
+        
+        router.host.fetch({
+          subresource: 'favorites'
+        });
+      }
+      else {
+        router.player.render();
+      }
     }
   });
 
