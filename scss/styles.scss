@@ -62,6 +62,10 @@ $host-width: 2;
   @return (($block-size * $count) + ($gutter * ($count - 1)) + $pad);
 }
 
+[data-action] {
+  cursor: pointer;
+}
+
 .scbone {
   width: block(9, 0 - $gutter);
   position: relative;
@@ -70,6 +74,9 @@ $host-width: 2;
   margin-left: 0 - (block(9, 0 - $gutter) / 2);
   overflow: visible;
   max-height: block(7);
+  ol, ul {
+    margin: 0;
+  }
 }
 
 .scbone .list {
@@ -284,16 +291,18 @@ $host-width: 2;
     width: block($total-width - ($host-width + 1), 0 - $gutter);
     max-height: block(4);
     overflow: auto;
-  }
 
-  .js-add,
-  .js-remove {
-    color: $primary-color;
-    cursor: pointer;
+    background-color: #fff;
   }
 }
 
+$actions-width: (46 - ($gutter * 2));
 .scbone .tracks {
+  position: absolute;
+  top: 0;
+  left: block($host-width + 1, $gutter);
+  width: block($total-width - ($host-width + 1), 0 - $gutter);
+
   li {
     background-color: $body-bg;
     margin-bottom: $gutter;
@@ -301,12 +310,16 @@ $host-width: 2;
     position: relative;
 
     height: block(0.5);
-    padding: 0 $gutter;
+    padding: 0 $gutter 0 ($actions-width + ($gutter * 2));
 
     @include transition(padding-right 0.3s, height 0.3s);
 
+    &:last-child {
+      margin-bottom: 0;
+    }
+
     &:hover {
-      padding: 0 block(1, $gutter) 0 $gutter;
+      padding: 0 block(1, $gutter) 0 ($actions-width + ($gutter * 2));
       height: block(1);
       .artwork {
         height: block(1);
@@ -316,7 +329,7 @@ $host-width: 2;
 
     &.no-artwork,
     &.current {
-      padding: 0 $gutter;
+      padding: 0 $gutter 0 ($actions-width + ($gutter * 2));
     }
     &.current {
       height: block(1);
@@ -324,6 +337,19 @@ $host-width: 2;
       .artwork {
         display: none;
       }
+    }
+  }
+
+  .actions {
+    position: absolute;
+    top: $gutter;
+    left: $gutter;
+    i {
+      display: block;
+      text-align: center;
+      width: $actions-width;
+      height: $actions-width;
+      line-height: $actions-width;
     }
   }
   
@@ -359,8 +385,10 @@ $host-width: 2;
 }
 
 .scbone {
-  &.user,
-  &.group {
+  &.host-tracks,
+  &.host-users,
+  &.guest-tracks,
+  &.guest-users {
     .player {
       width: block(1);
       max-height: block(2);
@@ -370,16 +398,6 @@ $host-width: 2;
         max-height: block(4);
         width: block($total-width - $host-width, 0 - $gutter);
       }
-    }
-  }
-  &.user {
-    .scope.group {
-      display: none;
-    }
-  }
-  &.group {
-    .scope.user {
-      display: none;
     }
   }
   &.player,
