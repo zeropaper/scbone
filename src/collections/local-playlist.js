@@ -31,13 +31,23 @@
     model: LocalTrackModel,
 
     initialize: function() {
-      this.on('sort add remove', function() {
-        this.sync('update', this, {
+      this.on('sort add remove reset', function() {
+        this.save({
           silent: true
         });
       });
 
-      this.sync('read', this, {});
+      this.load();
+    },
+
+    save: function(options) {
+      this.sync('update', this, options);
+      return this;
+    },
+
+    load: function(options) {
+      this.sync('read', this, options);
+      return this;
     }
   });
   return LocalPlaylist;
