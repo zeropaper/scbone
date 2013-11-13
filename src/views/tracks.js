@@ -18,27 +18,47 @@
   'use strict';
 
   // var $ = Backbone.$;
-  var SCUser = Backbone.View.extend({
+  var SCTracks = Backbone.View.extend({
     tagName: 'ol',
     className: 'tracks-list',
     
     events: {
-
+      'click [data-action="remove"]': 'removeTrack',
+      'click [data-action="add"]': 'addTrack'
     },
 
     initialize: function(options) {
       options = options || {};
+      this.playlist = options.playlist || this.collection;
       this.routePrefix = options.routePrefix;
-      // this.router = options.router;
       this.listenTo(this.collection, 'change reset add remove', this.render);
+    },
+
+    removeTrack: function(ev) {
+      var id = Backbone.$(ev.target).attr('data-id');
+      var model = this.playlist.get(id);
+      if (!!model) {
+        this.playlist.remove(model);
+      }
+      return false;
+    },
+
+    addTrack: function(ev) {
+      var id = Backbone.$(ev.target).attr('data-id');
+      var model = this.collection.get(id);
+      console.info('add track to playlist', id, model, this.playlist !== this.collection);
+      if (!!model) {
+        this.playlist.add(model.toJSON());
+      }
+      return false;
     },
 
     render: function(options) {
       options = options || {};
       var view = this;
-      var removeable = this.collection instanceof LocalPlaylist;
-      // console.info('models are removeable', removeable);
-      var collection = options.collection || view.collection;
+      var collection = view.collection;
+      var removeable = collection instanceof LocalPlaylist;
+
       var tracks = collection.map(function(track, t) {
         var data = track.toJSON();
         data.routePrefix = view.routePrefix;
@@ -55,5 +75,5 @@
     }
   });
 
-  return SCUser;
+  return SCTracks;
 }));

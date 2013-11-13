@@ -115,7 +115,7 @@
       view.tracks = new SCTracks({
         el: view.$('.tracks ol')[0],
         collection: view.collection,
-        routePrefix: view.routeprefix
+        routePrefix: view.routePrefix
       });
       view.tracks.render();
     },
@@ -324,52 +324,10 @@
         routePrefix: this.routePrefix
       }));
       this.drawProgress();
-
-      if (options.scope && _.isFunction(this[options.scope +'Render'])) {
-        this[options.scope +'Render'](options);
-      }
       
+      this.tracks.render();
       return this;
     },
-
-    tracksRender: function(options) {
-      options = options || {};
-      var view = this;
-
-      view.tracks.render();
-
-      return view;
-    },
-
-    usersRender: function(options) {
-      options = options || {};
-      var view = this;
-
-      if (options.collection) {
-        var users = options.collection.map(function(user, t) {
-          var data = user.toJSON();
-          data.routePrefix = view.routePrefix;
-          return templates['SCBone/userItem'](data);
-        });
-        view.$('.users ul').html(users.join(''));
-      }
-
-      return view;
-    },
-
-    //  renderTrack: function() {
-    //   var view = this;
-    //   var track = view.getCurrent();
-    //   var html = '';
-    //   var data = {};
-    //   if (track) {
-    //     data = track.toJSON();
-    //     data.routePrefix = view.routePrefix;
-    //     html = templates['SCBone/track'](data);
-    //   }
-    //   view.$('.details').html(html);
-    //   return view;
-    // },
 
     modal: function(content) {
       this.$modal = this.$('.modal');

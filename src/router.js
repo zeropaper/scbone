@@ -12,7 +12,8 @@
       require('./collections/tracks'),
       require('./views/profile'),
       require('./templates/player'),
-      require('./templates/user')
+      require('./templates/user'),
+      require('./templates/tracks')
     );
   }
   // AMD
@@ -27,14 +28,15 @@
       './collections/local-playlist',
       './views/profile',
       './views/player',
-      './views/user'
+      './views/user',
+      './views/tracks'
     ], factory);
   }
   // Browser
   else if (typeof _ !== 'undefined' && typeof Backbone !== 'undefined') {
     window.SCBone = factory(_, Backbone);
   }
-}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, LocalPlaylist, SCProfile, SCPlayer, SCUserView) {
+}(function(_, Backbone, __sc__, templates, SCUsers, SCTracks, LocalPlaylist, SCProfile, SCPlayer, SCUserView, SCTracksView) {
   var connected;
   var $ = Backbone.$;
   var SCUser = SCUsers.prototype.model;
@@ -48,8 +50,8 @@
     return val;
   }
 
-  var _scope = 'host';
-  var _scopes = 'track user comment group followers followings tracks users comments groups host-tracks host-users';
+  var _scope = 'host-tracks';
+  var _scopes = 'guest-tracks guest-users host-tracks host-users';
 
   var SCBone = Backbone.Router.extend({
     routePrefix: 'step/sounds',
@@ -84,9 +86,19 @@
 
 
     hostAction: function(subresource) {
-      if (subresource === 'favorites' || subresource === 'tracks') {
+      this.host.once('change:'+ subresource, function() {
+        var scope = 'host-tracks';
+        if (subresource === 'followings' || subresource === 'followers') {
+          scope = 'host-users';
+          // this.users.collection.reset(this.host[subresource].toJSON());
+        }
+        else {
+          this.tracks.collection.reset(this.host[subresource].toJSON());
+        }
 
-      }
+        this.scope(scope);
+      }, this);
+
       this.host.fetch({
         subresource: subresource
       });
@@ -94,7 +106,21 @@
     
     usersAction: function(id, subresource) {
       var user = this.guest;
-      this.scope('user');
+
+      if (subresource) {
+        user.once('change:'+ subresource, function() {
+          var scope = 'guest-tracks';
+          if (subresource === 'followings' || subresource === 'followers') {
+            scope = 'guest-users';
+            // this.users.collection.reset(user[subresource].toJSON());
+          }
+          else {
+            this.tracks.collection.reset(user[subresource].toJSON());
+          }
+
+          this.scope(scope);
+        }, this);
+      }
 
       if (user.id !== id) {
         user.attributes = {};
@@ -112,12 +138,11 @@
           }
         });
       }
-      else if(subresource) {
+      else if (subresource) {
         user.fetch({
           subresource: subresource
         });
       }
-
     },
 
     scConnect: function() {
@@ -216,10 +241,6 @@
         return false;
       });
 
-      // this.on('all', function() {
-      //   // console.info('SC router event', arguments);
-      // });
-
       SC.initialize({
         client_id:    options.clientid,
         redirect_uri: options.callbackurl
@@ -231,13 +252,7 @@
       router.host = new SCUser({
         permalink: options.hostpermalink
       });
-      router.listenTo(router.host, 'change:favorites', function(host, info) {
-        // console.info('router.host favorites changed', arguments);
-        if (!router.localPlaylist.length) {
-          router.localPlaylist.add(host.favorites.toJSON());
-          router.localPlaylist.sync('update', router.localPlaylist, {});
-        }
-      });
+      router.guest = new SCUser({});
 
 
       $(router.el).html(templates['SCBone/app'], {
@@ -245,7 +260,7 @@
       });
       router.profile = new SCProfile({
         model:      router.host,
-        el:         $('.host-sc-profile', options.el)[0],
+        el:         $('.host', options.el)[0],
         router:     router
       });
       router.profile.render();
@@ -256,7 +271,13 @@
         router:     router
       });
 
-      router.guest = new SCUser({});
+      router.tracks = new SCTracksView({
+        el: $('.scope.tracks')[0],
+        collection: new SCTracks(),
+        playlist: router.localPlaylist
+      });
+      // router.users = new SCUserView();
+
 
       router.user = new SCUserView({
         el:         $('.user', options.el)[0],
@@ -265,22 +286,38 @@
       });
       router.user.render();
 
-      router.localPlaylist.fetch();
+      // this.on('all', function() {
+      //   console.info('SC router event', arguments);
+      // });
+      // this.localPlaylist.on('all', function() {
+      //   console.info('SC router.localPlaylist event', arguments);
+      // });
+      // this.host.on('all', function() {
+      //   console.info('SC router.host event', arguments);
+      // });
+      // this.guest.on('all', function() {
+      //   console.info('SC router.guest event', arguments);
+      // });
+
+
       router.host.fetch({});
-    }
-  },
-  {
-    Models: {
-      User:           SCUser,
-      Track:          SCTrack
-    },
-    Collections: {
-      User:           SCUsers,
-      Track:          SCTracks,
-      LocalPlaylist:  LocalPlaylist
-    },
-    Views: {
-      Profile:        SCProfile
+      
+      if (!router.localPlaylist.load().length) {
+        router.host.once('change:favorites', function(host, info) {
+          router.localPlaylist.reset(host.favorites.toJSON(), {
+            silent: true
+          });
+          router.localPlaylist.save();
+          router.player.render();
+        });
+        
+        router.host.fetch({
+          subresource: 'favorites'
+        });
+      }
+      else {
+        router.player.render();
+      }
     }
   });
 
