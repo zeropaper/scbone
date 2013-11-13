@@ -2,7 +2,6 @@
   "framework": "mocha",
   "test_page": "index.html",
   "src_files": [
-    "src/**/*.js",
     "test/spec/**/*.js"
   ],
   "routes": {

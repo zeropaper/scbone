@@ -2,6 +2,10 @@ define([
   'backbone',
   'scbone'
 ], function(Backbone, SCBone) {
+  var app;
+  var $ = Backbone.$;
+  var el = $('<div></div>')[0];
+  
   var clientid = 'db557c505e52fcf89ac1da4a1a3a2642';
   var hostpermalink = 'zeropaper';
 
@@ -9,12 +13,10 @@ define([
   var SCPlayerView = require('views/player');
   var SCProfileView = require('views/profile');
   var SCtracksView = require('views/tracks');
+  
+  // $('body').prepend(el);
 
   describe('the application router', function() {
-    var app;
-    var $ = Backbone.$;
-    var el = $('<div></div>')[0];
-    $('body').prepend(el);
 
     it('loads its dependencies', function() {
       expect(function() {
