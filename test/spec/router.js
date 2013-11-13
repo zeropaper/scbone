@@ -5,11 +5,23 @@ define([
   var clientid = 'db557c505e52fcf89ac1da4a1a3a2642';
   var hostpermalink = 'zeropaper';
 
+  var SCUserModel = require('models/user');
+  var SCPlayerView = require('views/player');
+  var SCProfileView = require('views/profile');
+  var SCtracksView = require('views/tracks');
+
   describe('the application router', function() {
     var app;
     var $ = Backbone.$;
     var el = $('<div></div>')[0];
     $('body').prepend(el);
+
+    it('loads its dependencies', function() {
+      expect(function() {
+        require('models/user');
+        require('views/player');
+      }).not.to.throwError();
+    });
 
     it('throws an error when no hostpermalink is passed in the options', function() {
       expect(function() {
@@ -44,15 +56,26 @@ define([
           clientid:       clientid
         });
       }).not.to.throwError();
+    });
 
-      // is a User model instance
-      expect(app.host).to.be.a(require('models/user'));
+    describe('the host user instance', function() {
+      it('is an instance of the User model', function() {
+        expect(app.host).to.be.ok();
+        expect(app.host).to.be.a(SCUserModel);
+      });
+    });
 
-      // is a User model instance
-      expect(app.guest).to.be.a(require('models/user'));
+    describe('the guest user instance', function() {
+      it('is an instance of the User model', function() {
+        expect(app.guest).to.be.ok();
+        expect(app.guest).to.be.a(SCUserModel);
+      });
+    });
 
-      // is a Player view instance
-      expect(app.player).to.be.a(require('views/player'));
+    describe('the player view instance', function() {
+      it('is an instance of the Player view', function() {
+        expect(app.player).to.be.a(SCPlayerView);
+      });
     });
 
     describe('the connection mechanisms', function() {

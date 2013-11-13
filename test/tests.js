@@ -39,7 +39,9 @@ define('tests', function() {
     mocha.setup('bdd');
 
     require([
+      'spec/requirejs-env',
       'spec/router',
+      'spec/local-playlist',
       'spec/player',
       'spec/host',
       'spec/user'
@@ -47,6 +49,5 @@ define('tests', function() {
 
       mocha.run();
     });
-
   });
 });
