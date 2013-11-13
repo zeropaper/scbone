@@ -627,19 +627,21 @@ define("../bower_components/almond/almond", function(){});
 
       '<div class="track-info <%- sharing %>">',
         '<div class="title">',
-          '<% if (removeable) { %>',
-          '<i class="icon-minus js-remove"></i>',
-          '<% } %>',
           '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
         '</div>',
         
+
         '<span class="duration">',
           '<i class="icon-clock"></i>',
           '<%- moment(duration).format("m:s") %>',
         '</span>',
 
         
-        '<span class="likes"',
+        '<% if (removeable) { %>',
+        '<i class="icon-minus" data-action="remove" data-id="<%- id %>"></i>',
+        '<% } %>',
+        
+        '<span class="likes" data-action="like" data-id="<%- id %>"',
         '<%= (user_liked ? " title=\\"You liked it.\\"" : "") %>',
         '>',
           '<i class="icon-heart<%- (user_liked ? "" : "-empty") %>"></i>',
@@ -652,9 +654,6 @@ define("../bower_components/almond/almond", function(){});
 
         '<% if (sharing === "private") { %>',
         '<% } %>',
-        // '<span class="user">',
-        //   '<span class="full-name"><%- user.full_name %></span>',
-        // '</span>',
       '</div>',
 
     '</li>',
@@ -1136,14 +1135,16 @@ define("../bower_components/almond/almond", function(){});
     },
 
     initialize: function(options) {
-      this.router = options.router;
+      options = options || {};
+      this.routePrefix = options.routePrefix || {};
+      // this.router = options.router;
       this.listenTo(this.model, 'change', this.render);
     },
 
     render: function() {
       var data = {};
       data.host = this.model.toJSON();
-      data.routePrefix = this.router.routePrefix;
+      data.routePrefix = this.routePrefix;
       this.$el.html(templates['SCBone/profile'](data));
       return this;
     }
@@ -1180,7 +1181,9 @@ define("../bower_components/almond/almond", function(){});
     },
 
     initialize: function(options) {
-      this.router = options.router;
+      options = options || {};
+      this.routePrefix = options.routePrefix;
+      // this.router = options.router;
       this.listenTo(this.collection, 'change reset add remove', this.render);
     },
 
@@ -1192,7 +1195,7 @@ define("../bower_components/almond/almond", function(){});
       var collection = options.collection || view.collection;
       var tracks = collection.map(function(track, t) {
         var data = track.toJSON();
-        data.routePrefix = view.router.routePrefix;
+        data.routePrefix = view.routePrefix;
         data.removeable = removeable;
         return templates['SCBone/trackItem'](data);
       });
@@ -1242,7 +1245,9 @@ define("../bower_components/almond/almond", function(){});
 
     initialize: function(options) {
       var view = this;
-      view.router = options.router;
+      options = options || {};
+      view.routePrefix = options.routePrefix || '';
+
       view.sound = null;
       view.trackId = null;
 
@@ -1313,7 +1318,7 @@ define("../bower_components/almond/almond", function(){});
 
       view.$el.html(templates['SCBone/player']({
         currentTrack: {},
-        routePrefix: this.router.routePrefix
+        routePrefix: this.routePrefix
       }));
 
       view.$canvas = $('<canvas />');
@@ -1323,7 +1328,7 @@ define("../bower_components/almond/almond", function(){});
       view.tracks = new SCTracks({
         el: view.$('.tracks ol')[0],
         collection: view.collection,
-        router: view.router
+        routePrefix: view.routeprefix
       });
       view.tracks.render();
     },
@@ -1529,7 +1534,7 @@ define("../bower_components/almond/almond", function(){});
 
       this.$('.controls').html(templates['SCBone/controls']({
         currentTrack: model ? model.toJSON() : {},
-        routePrefix: this.router.routePrefix
+        routePrefix: this.routePrefix
       }));
       this.drawProgress();
 
@@ -1543,7 +1548,7 @@ define("../bower_components/almond/almond", function(){});
     tracksRender: function(options) {
       options = options || {};
       var view = this;
-      
+
       view.tracks.render();
 
       return view;
@@ -1556,7 +1561,7 @@ define("../bower_components/almond/almond", function(){});
       if (options.collection) {
         var users = options.collection.map(function(user, t) {
           var data = user.toJSON();
-          data.routePrefix = view.router.routePrefix;
+          data.routePrefix = view.routePrefix;
           return templates['SCBone/userItem'](data);
         });
         view.$('.users ul').html(users.join(''));
@@ -1572,7 +1577,7 @@ define("../bower_components/almond/almond", function(){});
     //   var data = {};
     //   if (track) {
     //     data = track.toJSON();
-    //     data.routePrefix = view.router.routePrefix;
+    //     data.routePrefix = view.routePrefix;
     //     html = templates['SCBone/track'](data);
     //   }
     //   view.$('.details').html(html);
@@ -1632,7 +1637,9 @@ define("../bower_components/almond/almond", function(){});
     },
 
     initialize: function(options) {
-      this.router = options.router;
+      options = options || {};
+      this.routePrefix = options.routePrefix || {};
+      // this.router = options.router;
       this.listenTo(this.model, 'change', this.render);
     },
 
@@ -1641,7 +1648,7 @@ define("../bower_components/almond/almond", function(){});
       // only render if we have a loaded resource
       if (this.model.id) {
         var data = this.model.toJSON();
-        data.routePrefix = this.router.routePrefix;
+        data.routePrefix = this.routePrefix;
         html = templates['SCBone/user'](data);
       }
       this.$el.html(html);
@@ -1701,7 +1708,8 @@ define("../bower_components/almond/almond", function(){});
     return val;
   }
 
-  var scopes = 'track user comment group followers followings tracks users comments groups host-tracks host-users';
+  var _scope = 'host';
+  var _scopes = 'track user comment group followers followings tracks users comments groups host-tracks host-users';
 
   var SCBone = Backbone.Router.extend({
     routePrefix: 'step/sounds',
@@ -1746,7 +1754,7 @@ define("../bower_components/almond/almond", function(){});
     
     usersAction: function(id, subresource) {
       var user = this.guest;
-      this.setScope('user');
+      this.scope('user');
 
       if (user.id !== id) {
         user.attributes = {};
@@ -1815,15 +1823,19 @@ define("../bower_components/almond/almond", function(){});
     },
 
     scIsConnected: function() {
-      return !!scAccessToken();
+      return !!SC.accessToken();
     },
 
-    setScope: function(scope) {
-      this.$el.removeClass(scopes);
-      if (scope) {
-        this.$el.addClass(scope);
+    scope: function(scope) {
+      // scope = scope || 'host';
+      if (scope && _scope !== scope) {
+        _scope = scope;
+        this.$el.removeClass(_scopes);
+        if (scope) {
+          this.$el.addClass(scope);
+        }
       }
-      return this;
+      return _scope;
     },
 
     initialize: function(options) {
@@ -1832,12 +1844,18 @@ define("../bower_components/almond/almond", function(){});
       router.$el = $(router.el);
       router.routePrefix = options.routePrefix || '';
 
+      router.$el.addClass(_scope);
+
       if (!options.hostpermalink) {
         throw new Error('A `hostpermalink` option must be set.');
       }
 
       if (!options.el) {
         throw new Error('A `el` (DOM element) option must be set.');
+      }
+
+      if (!options.clientid) {
+        throw new Error('A `clientid` option must be set.');
       }
 
       var linksSelector = '[href^="/"]';
