@@ -256,33 +256,38 @@
 
 
       $(router.el).html(templates['SCBone/app'], {
-        routePrefix: router.routePrefix
+        routePrefix:  router.routePrefix,
+        isConnected:  SCBone.isConnected()
       });
+
       router.profile = new SCProfile({
-        model:      router.host,
-        el:         $('.host', options.el)[0],
-        router:     router
+        model:        router.host,
+        el:           $('.host', options.el)[0],
+        // router:       router,
+        isConnected:  SCBone.isConnected
       });
       router.profile.render();
 
       router.player = new SCPlayer({
-        el:         $('.player', options.el)[0],
-        collection: router.localPlaylist,
-        router:     router
+        el:           $('.player', options.el)[0],
+        collection:   router.localPlaylist,
+        // router:       router,
+        isConnected:  SCBone.isConnected
       });
 
       router.tracks = new SCTracksView({
-        el: $('.scope.tracks')[0],
-        collection: new SCTracks(),
-        playlist: router.localPlaylist
+        el:           $('.scope.tracks')[0],
+        collection:   new SCTracks(),
+        playlist:     router.localPlaylist,
+        isConnected:  SCBone.isConnected
       });
       // router.users = new SCUserView();
 
-
       router.user = new SCUserView({
-        el:         $('.user', options.el)[0],
-        model:      router.guest,
-        router:     router
+        el:           $('.user', options.el)[0],
+        model:        router.guest,
+        // router:       router,
+        isConnected:  SCBone.isConnected
       });
       router.user.render();
 
@@ -318,6 +323,11 @@
       else {
         router.player.render();
       }
+    }
+  },
+  {
+    isConnected: function() {
+      return SC && SC.accessToken();
     }
   });
 

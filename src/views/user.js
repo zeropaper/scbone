@@ -24,6 +24,7 @@
     initialize: function(options) {
       options = options || {};
       this.routePrefix = options.routePrefix || {};
+      this.isConnected = options.isConnected || false;
       // this.router = options.router;
       this.listenTo(this.model, 'change', this.render);
     },

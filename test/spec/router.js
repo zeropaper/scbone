@@ -82,6 +82,7 @@ define([
 
     describe('the connection mechanisms', function() {
       it('is not connected by default', function() {
+        expect(SCBone.isConnected()).not.to.be.ok();
         expect(app.scIsConnected()).not.to.be.ok();
       });
 
@@ -91,6 +92,11 @@ define([
         }).not.to.throwError(function(err) {
           console.info(err.stack || ''+ err);
         });
+      });
+
+      xit('is connected', function() {
+        expect(SCBone.isConnected()).to.be.ok();
+        expect(app.scIsConnected()).to.be.ok();
       });
 
       xit('loads the connected user profile information', function(done) {

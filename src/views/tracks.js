@@ -30,7 +30,9 @@
     initialize: function(options) {
       options = options || {};
       this.playlist = options.playlist || this.collection;
-      this.routePrefix = options.routePrefix;
+      this.routePrefix = options.routePrefix || '';
+      this.isConnected = options.isConnected || false;
+
       this.listenTo(this.collection, 'change reset add remove', this.render);
     },
 
@@ -63,6 +65,7 @@
         var data = track.toJSON();
         data.routePrefix = view.routePrefix;
         data.removeable = removeable;
+        data.isConnected = _.result(view, 'isConnected');
         return templates['SCBone/trackItem'](data);
       });
 

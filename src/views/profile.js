@@ -32,7 +32,8 @@
     initialize: function(options) {
       options = options || {};
       this.routePrefix = options.routePrefix || '';
-      // this.router = options.router;
+      this.isConnected = options.isConnected || false;
+      
       this.listenTo(this.model, 'change', this.render);
     },
 

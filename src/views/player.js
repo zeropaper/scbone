@@ -33,6 +33,7 @@
     initialize: function(options) {
       var view = this;
       options = options || {};
+      view.isConnected = options.isConnected || false;
       view.routePrefix = options.routePrefix || '';
 
       view.sound = null;
@@ -105,6 +106,7 @@
 
       view.$el.html(templates['SCBone/player']({
         currentTrack: {},
+        isConnected: _.result(view, 'isConnected'),
         routePrefix: this.routePrefix
       }));
 
@@ -321,6 +323,7 @@
 
       this.$('.controls').html(templates['SCBone/controls']({
         currentTrack: model ? model.toJSON() : {},
+        isConnected: _.result(this, 'isConnected'),
         routePrefix: this.routePrefix
       }));
       this.drawProgress();
