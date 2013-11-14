@@ -51,7 +51,7 @@ define([], function() {
   function testDeletetion() {
     it('has no defined scripts', function() {
       expect(function() {
-        require('router');
+        require('mixins');
       }).to.throwError();
 
       expect(function() {
