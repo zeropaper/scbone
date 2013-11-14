@@ -431,6 +431,9 @@ define("../bower_components/almond/almond", function(){});
 }(function(_) {
   
 
+  // I perfectly know that I should pre-compile the templates at build... 
+  // will do :)
+
   var templates = {};
   templates['SCBone/profile'] = _.template([
     '',
@@ -443,7 +446,10 @@ define("../bower_components/almond/almond", function(){});
       '</a>',
 
       '<div class="info">',
-        '<a href="<%- prefix %>host" class="username"><%- host.username %></a>',
+        '<h3 class="username">',
+          '<a href="<%- prefix %>host"><%- host.username %></a>',
+        '</h3>',
+        
         '<span class="full-name"><%- host.full_name %></span>',
         
         '<span class="city"><%- host.city %></span><%= (host.country && host.city ? "," : "") %>',
@@ -627,11 +633,7 @@ define("../bower_components/almond/almond", function(){});
       '<% } %>',
 
       '<div class="track-info <%- sharing %>">',
-        '<div class="title">',
-          '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
-        '</div>',
-
-        '<div class="meta">',
+        '<h4 class="title">',
           '<span class="playlist actions">',
           '<% if (removeable) { %>',
             '<i class="icon-minus" data-action="remove" data-id="<%- id %>"></i>',
@@ -639,7 +641,24 @@ define("../bower_components/almond/almond", function(){});
             '<i class="icon-plus" data-action="add" data-id="<%- id %>"></i>',
           '<% } %>',
           '</span>',
-          
+          '<a title="<%- title %>" href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
+        '</h4>',
+
+        '<div class="release">',
+          '<a class="user" href="<%- prefix %>users/<%- user.permalink %>" class="username">',
+            '<i class="icon-user"></i>',
+            '<%- user.username %>',
+          '</a>',
+
+          '<% if (typeof label !== "undefined" && label.permalink !== user.permalink) { %>',
+          '<a class="label" href="<%- prefix %>users/<%- label.permalink %>" class="username">',
+            '<i class="icon-user"></i>',
+            '<%- label.username %>',
+          '</a>',
+          '<% } %>',
+        '</div>',
+
+        '<div class="meta">',
           '<span class="duration">',
             '<i class="icon-clock"></i>',
             '<%- moment(duration).format("m:s") %>',
@@ -665,6 +684,16 @@ define("../bower_components/almond/almond", function(){});
             '<%- comment_count %>',
           '</span>',
           '<% } %>',
+          
+          '<span class="likes"',
+          '<% if(isConnected) {%>',
+          ' data-action="like" data-id="<%- id %>"',
+          '<% } %>',
+          '<%= (isConnected && user_liked ? " title=\\"You liked it.\\"" : "") %>',
+          '>',
+            '<i class="icon-heart<%- (user_liked ? "" : "-empty") %>"></i>',
+            '<%- likes %>',
+          '</span>',
 
           '<% if (downloadable) { %>',
             '<a href="<%- download_url %>" class="download-count">',
@@ -677,27 +706,6 @@ define("../bower_components/almond/almond", function(){});
               '<%- downloaded %>',
             '</span>',
           '<% } %>',
-          
-          '<span class="likes" data-action="like" data-id="<%- id %>"',
-          '<%= (user_liked ? " title=\\"You liked it.\\"" : "") %>',
-          '>',
-            '<i class="icon-heart<%- (user_liked ? "" : "-empty") %>"></i>',
-            '<%- likes %>',
-          '</span>',
-
-          '<div class="release">',
-            '<a class="user" href="<%- prefix %>users/<%- user.permalink %>" class="username">',
-              '<i class="icon-user"></i>',
-              '<%- user.username %>',
-            '</a>',
-
-            '<% if (typeof label !== "undefined") { %>',
-            '<a class="label" href="<%- prefix %>users/<%- label.permalink %>" class="username">',
-              '<i class="icon-user"></i>',
-              '<%- label.username %>',
-            '</a>',
-            '<% } %>',
-          '</div>',
         '</div>',
           
       '</div>',
@@ -1201,7 +1209,8 @@ define("../bower_components/almond/almond", function(){});
     initialize: function(options) {
       options = options || {};
       this.routePrefix = options.routePrefix || '';
-      // this.router = options.router;
+      this.isConnected = options.isConnected || false;
+      
       this.listenTo(this.model, 'change', this.render);
     },
 
@@ -1248,7 +1257,9 @@ define("../bower_components/almond/almond", function(){});
     initialize: function(options) {
       options = options || {};
       this.playlist = options.playlist || this.collection;
-      this.routePrefix = options.routePrefix;
+      this.routePrefix = options.routePrefix || '';
+      this.isConnected = options.isConnected || false;
+
       this.listenTo(this.collection, 'change reset add remove', this.render);
     },
 
@@ -1281,6 +1292,7 @@ define("../bower_components/almond/almond", function(){});
         var data = track.toJSON();
         data.routePrefix = view.routePrefix;
         data.removeable = removeable;
+        data.isConnected = _.result(view, 'isConnected');
         return templates['SCBone/trackItem'](data);
       });
 
@@ -1330,6 +1342,7 @@ define("../bower_components/almond/almond", function(){});
     initialize: function(options) {
       var view = this;
       options = options || {};
+      view.isConnected = options.isConnected || false;
       view.routePrefix = options.routePrefix || '';
 
       view.sound = null;
@@ -1402,6 +1415,7 @@ define("../bower_components/almond/almond", function(){});
 
       view.$el.html(templates['SCBone/player']({
         currentTrack: {},
+        isConnected: _.result(view, 'isConnected'),
         routePrefix: this.routePrefix
       }));
 
@@ -1618,6 +1632,7 @@ define("../bower_components/almond/almond", function(){});
 
       this.$('.controls').html(templates['SCBone/controls']({
         currentTrack: model ? model.toJSON() : {},
+        isConnected: _.result(this, 'isConnected'),
         routePrefix: this.routePrefix
       }));
       this.drawProgress();
@@ -1681,6 +1696,7 @@ define("../bower_components/almond/almond", function(){});
     initialize: function(options) {
       options = options || {};
       this.routePrefix = options.routePrefix || {};
+      this.isConnected = options.isConnected || false;
       // this.router = options.router;
       this.listenTo(this.model, 'change', this.render);
     },
@@ -1958,33 +1974,38 @@ define("../bower_components/almond/almond", function(){});
 
 
       $(router.el).html(templates['SCBone/app'], {
-        routePrefix: router.routePrefix
+        routePrefix:  router.routePrefix,
+        isConnected:  SCBone.isConnected()
       });
+
       router.profile = new SCProfile({
-        model:      router.host,
-        el:         $('.host', options.el)[0],
-        router:     router
+        model:        router.host,
+        el:           $('.host', options.el)[0],
+        // router:       router,
+        isConnected:  SCBone.isConnected
       });
       router.profile.render();
 
       router.player = new SCPlayer({
-        el:         $('.player', options.el)[0],
-        collection: router.localPlaylist,
-        router:     router
+        el:           $('.player', options.el)[0],
+        collection:   router.localPlaylist,
+        // router:       router,
+        isConnected:  SCBone.isConnected
       });
 
       router.tracks = new SCTracksView({
-        el: $('.scope.tracks')[0],
-        collection: new SCTracks(),
-        playlist: router.localPlaylist
+        el:           $('.scope.tracks')[0],
+        collection:   new SCTracks(),
+        playlist:     router.localPlaylist,
+        isConnected:  SCBone.isConnected
       });
       // router.users = new SCUserView();
 
-
       router.user = new SCUserView({
-        el:         $('.user', options.el)[0],
-        model:      router.guest,
-        router:     router
+        el:           $('.user', options.el)[0],
+        model:        router.guest,
+        // router:       router,
+        isConnected:  SCBone.isConnected
       });
       router.user.render();
 
@@ -2020,6 +2041,11 @@ define("../bower_components/almond/almond", function(){});
       else {
         router.player.render();
       }
+    }
+  },
+  {
+    isConnected: function() {
+      return SC && SC.accessToken();
     }
   });
 
