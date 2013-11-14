@@ -58,6 +58,7 @@ $gutter: 8px;
 $block-size: 100px;
 $total-width: 9;
 $host-width: 2;
+$speed: 0.3s;
 
 @function block($count, $pad: 0) {
   // @return emCalc(($block-size * $count) + ($gutter * ($count - 1)) + $pad);
@@ -76,10 +77,13 @@ $host-width: 2;
   margin-left: 0 - (block(9, 0 - $gutter) / 2);
   overflow: visible;
   max-height: block(7);
+  
   ol,
   ul {
     margin: 0;
+    list-style: none;
   }
+
   h1,
   h2,
   h3,
@@ -107,20 +111,11 @@ $host-width: 2;
   }
 }
 
-.scbone .list {
-  ul,
-  ol {
-    list-style: none;
-  }
-}
-
-.scbone .description {
-  line-height: 1.2;
-}
-
 .scbone .host {
   width: block($host-width);
   overflow: visible;
+  position: relative;
+  z-index: 100;
 
   .picture,
   .info,
@@ -162,8 +157,15 @@ $host-width: 2;
   }
 
   .info {
-    width: block($host-width);
-    // float: left;
+    min-width: block($host-width);
+    max-width: block($host-width);
+    position: absolute;
+    top: 0;
+    left: block(1, $gutter);
+    @include transition(max-width $speed);
+    &:hover {
+      max-width: block($total-width - 1);
+    }
   }
 
   .full-name,
@@ -176,6 +178,9 @@ $host-width: 2;
     display: block;
     text-transform: uppercase;
     margin-bottom: $gutter;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .full-name {
     display: block;
@@ -262,12 +267,20 @@ $host-width: 2;
   width: block($total-width - $host-width, 0 - $gutter);
   min-height: block(2);
   z-index: 99;
+  @include transition(width $speed);
+
+
+  .progress,
+  .controls,
+  .logos,
+  .tracks li {
+    background-color: lighten($body-bg, 10%);
+  }
 
   .progress,
   .controls,
   .logos {
     width: block(1);
-    background-color: $body-bg;
     position: absolute;
     left: 0;
   }
@@ -311,8 +324,8 @@ $host-width: 2;
     width: block($total-width - ($host-width + 1), 0 - $gutter);
     max-height: block(4);
     overflow: auto;
-
-    background-color: #fff;
+    
+    // background-color: #fff;
   }
 }
 
@@ -332,7 +345,7 @@ $actions-width: (32 - ($gutter * 1));
     height: block(0.5);
     padding: 0 $gutter;
 
-    @include transition(padding-right 0.3s, height 0.3s);
+    @include transition(padding-right $speed, height $speed);
 
     &:last-child {
       margin-bottom: 0;
@@ -369,7 +382,7 @@ $actions-width: (32 - ($gutter * 1));
     right: 0;
     opacity: 0;
     height: block(0.5);
-    @include transition(opacity 0.3s, height 0.3s);
+    @include transition(opacity $speed, height $speed);
   }
 
   .title {
@@ -408,7 +421,7 @@ $actions-width: (32 - ($gutter * 1));
   .release,
   .meta {
     font-size: small;
-    margin-left: 28px;
+    margin-left: 24px;
   }
 
   .meta {
@@ -429,6 +442,7 @@ $actions-width: (32 - ($gutter * 1));
 .scbone .comments {
 
 }
+
 
 .scbone {
   &.host-tracks,
