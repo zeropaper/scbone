@@ -7,13 +7,13 @@ Simple soundcloud player/client based on backbone.js.
 Aims and goals
 --------------
 
-This is a personal project, its aim is first to be included in my website [irata.ch](http://irata.ch).  
+This is a personal project, its aim is first to be included in my website [irata.ch](http://irata.ch) (who should be relaunched soon). It is therefor an expirmental project (but I try not to neglect quality).  
 If somebody find it interesting and want to reuse it, be my guest.
 
 Demonstration
 -------------
 
-As mentionned, I wrote that for my [personal page](http://irata.ch) or on the [project page](http://zeropaper.github.io/scbone/).
+As mentionned, I wrote that for my [personal page](http://irata.ch) or on the [project page](http://zeropaper.github.io/scbone/) - still have some issues with font of icons.
 
 Use
 ---
