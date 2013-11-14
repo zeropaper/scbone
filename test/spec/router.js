@@ -107,7 +107,7 @@ define([
         expect(app.scope).to.be.a(Function);
 
         var scope = app.scope();
-        expect(scope).to.be.eql('host');
+        expect(scope).to.be.eql('host-tracks');
 
         expect(app.$el.hasClass(scope)).to.be.ok();
       });
