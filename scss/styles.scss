@@ -6,6 +6,8 @@
 
 @import 'normalize';
 
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,100,300);
+
 // Foundation Components
 @import 'foundation/components/global';
 // @import 'foundation/components/grid';
@@ -74,8 +76,34 @@ $host-width: 2;
   margin-left: 0 - (block(9, 0 - $gutter) / 2);
   overflow: visible;
   max-height: block(7);
-  ol, ul {
+  ol,
+  ul {
     margin: 0;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    margin: 0;
+  }
+
+  [data-action] {
+    cursor: pointer;
+    color: $primary-color;
+  }
+
+  .meta {
+    font-size: small;
+    span {
+      display: inline-block;
+      min-width: 72px;
+      margin-left: 8px;
+    }
+  }
+
+  .description {
+    line-height: 1.2;
   }
 }
 
@@ -158,14 +186,6 @@ $host-width: 2;
     list-style: none;
     overflow: hidden;
     font-size: small;
-    li {
-      // float: left;
-      // display: block;
-      // width: 50%;
-
-      // height: block(0.5, 0 - $gutter);
-      // line-height: block(0.5);
-    }
   }
   
   .description {
@@ -296,7 +316,7 @@ $host-width: 2;
   }
 }
 
-$actions-width: (46 - ($gutter * 2));
+$actions-width: (32 - ($gutter * 1));
 .scbone .tracks {
   position: absolute;
   top: 0;
@@ -310,7 +330,7 @@ $actions-width: (46 - ($gutter * 2));
     position: relative;
 
     height: block(0.5);
-    padding: 0 $gutter 0 ($actions-width + ($gutter * 2));
+    padding: 0 $gutter;
 
     @include transition(padding-right 0.3s, height 0.3s);
 
@@ -319,17 +339,20 @@ $actions-width: (46 - ($gutter * 2));
     }
 
     &:hover {
-      padding: 0 block(1, $gutter) 0 ($actions-width + ($gutter * 2));
+      padding: 0 block(1, $gutter) 0 $gutter;
       height: block(1);
       .artwork {
         height: block(1);
         opacity: 1;
       }
+      .title {
+        max-height: 2em;
+      }
     }
 
     &.no-artwork,
     &.current {
-      padding: 0 $gutter 0 ($actions-width + ($gutter * 2));
+      padding: 0 $gutter;
     }
     &.current {
       height: block(1);
@@ -337,19 +360,6 @@ $actions-width: (46 - ($gutter * 2));
       .artwork {
         display: none;
       }
-    }
-  }
-
-  .actions {
-    position: absolute;
-    top: $gutter;
-    left: $gutter;
-    i {
-      display: block;
-      text-align: center;
-      width: $actions-width;
-      height: $actions-width;
-      line-height: $actions-width;
     }
   }
   
@@ -363,16 +373,52 @@ $actions-width: (46 - ($gutter * 2));
   }
 
   .title {
+    font-size: emCalc(16px);
+    font-weight: $header-font-weight;
+    position: relative;
     padding: $gutter 0;
+    margin: 0;
     min-height: block(0.5);
     display: block;
+
+    .actions,
+    a {
+      display: block;
+      height: 28px;
+      line-height: 28px;
+    }
+
+    .actions {
+      position: absolute;
+      width: 28px;
+      top: $gutter;
+      left: 0;
+    }
+    
+    a {
+      text-transform: uppercase;
+      max-height: 28px;
+      margin-left: 28px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
-  .duration,
-  .likes {
-    display: inline-block;
-    min-width: block(0.5);
+  .release,
+  .meta {
     font-size: small;
+    margin-left: 28px;
+  }
+
+  .meta {
+    margin-top: 4px;
+    span, 
+    a {
+      display: inline-block;
+      min-width: 40px;
+      margin: 0 4px 0 0;
+    }
   }
 }
 

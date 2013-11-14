@@ -41,8 +41,9 @@ $success-color: #5da423;
 // Control header font styles
 
 // $header-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-$header-font-family: "Droid Sans", "droid_sansregular", "Helvetica", Helvetica, Arial, sans-serif;
-$header-font-weight: normal;
-$header-font-style: normal;
-$header-font-color: darken($primary-color, 9%);
+$header-font-family: 'Roboto', sans-serif;
+$header-font-weight: 300;
+$header-font-style: uppercase;
+// $header-font-color: darken($primary-color, 9%);
+$header-font-color: $primary-color;
 

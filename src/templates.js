@@ -32,7 +32,10 @@
       '</a>',
 
       '<div class="info">',
-        '<a href="<%- prefix %>host" class="username"><%- host.username %></a>',
+        '<h3 class="username">',
+          '<a href="<%- prefix %>host"><%- host.username %></a>',
+        '</h3>',
+        
         '<span class="full-name"><%- host.full_name %></span>',
         
         '<span class="city"><%- host.city %></span><%= (host.country && host.city ? "," : "") %>',
@@ -216,7 +219,7 @@
       '<% } %>',
 
       '<div class="track-info <%- sharing %>">',
-        '<div class="title">',
+        '<h4 class="title">',
           '<span class="playlist actions">',
           '<% if (removeable) { %>',
             '<i class="icon-minus" data-action="remove" data-id="<%- id %>"></i>',
@@ -224,8 +227,8 @@
             '<i class="icon-plus" data-action="add" data-id="<%- id %>"></i>',
           '<% } %>',
           '</span>',
-          '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
-        '</div>',
+          '<a title="<%- title %>" href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
+        '</h4>',
 
         '<div class="release">',
           '<a class="user" href="<%- prefix %>users/<%- user.permalink %>" class="username">',

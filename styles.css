@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,100,300);
 /* normalize.css v2.1.2 | MIT License | git.io/normalize */
 /* ==========================================================================
    HTML5 display definitions
@@ -861,7 +862,7 @@ p.lead {
 /* line 116, bower_components/foundation/scss/foundation/components/_type.scss */
 .subheader {
   line-height: 1.4;
-  color: #f9f2cb;
+  color: #fefcf4;
   font-weight: 300;
   margin-top: 0.2em;
   margin-bottom: 0.5em; }
@@ -922,10 +923,10 @@ p {
 /* Default header styles */
 /* line 182, bower_components/foundation/scss/foundation/components/_type.scss */
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Droid Sans", "droid_sansregular", "Helvetica", Helvetica, Arial, sans-serif;
-  font-weight: normal;
-  font-style: normal;
-  color: #ebce41;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-style: uppercase;
+  color: #efd96a;
   text-rendering: optimizeLegibility;
   margin-top: 0.2em;
   margin-bottom: 0.5em;
@@ -933,7 +934,7 @@ h1, h2, h3, h4, h5, h6 {
   /* line 192, bower_components/foundation/scss/foundation/components/_type.scss */
   h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
     font-size: 60%;
-    color: #f9f2cb;
+    color: #fefcf4;
     line-height: 0; }
 
 /* line 199, bower_components/foundation/scss/foundation/components/_type.scss */
@@ -1074,20 +1075,20 @@ blockquote {
   blockquote cite {
     display: block;
     font-size: 0.8125em;
-    color: #f4e69d; }
+    color: #f9f0c6; }
     /* line 321, bower_components/foundation/scss/foundation/components/_type.scss */
     blockquote cite:before {
       content: "\2014 \0020"; }
     /* line 326, bower_components/foundation/scss/foundation/components/_type.scss */
     blockquote cite a,
     blockquote cite a:visited {
-      color: #f4e69d; }
+      color: #f9f0c6; }
 
 /* line 332, bower_components/foundation/scss/foundation/components/_type.scss */
 blockquote,
 blockquote p {
   line-height: 1.6;
-  color: #f9f2cb; }
+  color: #fefcf4; }
 
 /* Microformats */
 /* line 338, bower_components/foundation/scss/foundation/components/_type.scss */
@@ -1577,15 +1578,15 @@ blockquote p {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg); } }
 
-/* line 51, scss/styles.scss */
+/* line 53, scss/styles.scss */
 body {
   background-color: #222; }
 
-/* line 65, scss/styles.scss */
+/* line 67, scss/styles.scss */
 [data-action] {
   cursor: pointer; }
 
-/* line 69, scss/styles.scss */
+/* line 71, scss/styles.scss */
 .scbone {
   width: 956px;
   position: relative;
@@ -1594,24 +1595,47 @@ body {
   margin-left: -478px;
   overflow: visible;
   max-height: 748px; }
-  /* line 77, scss/styles.scss */
-  .scbone ol, .scbone ul {
+  /* line 80, scss/styles.scss */
+  .scbone ol,
+  .scbone ul {
     margin: 0; }
+  /* line 87, scss/styles.scss */
+  .scbone h1,
+  .scbone h2,
+  .scbone h3,
+  .scbone h4,
+  .scbone h5 {
+    margin: 0; }
+  /* line 91, scss/styles.scss */
+  .scbone [data-action] {
+    cursor: pointer;
+    color: #efd96a; }
+  /* line 96, scss/styles.scss */
+  .scbone .meta {
+    font-size: small; }
+    /* line 98, scss/styles.scss */
+    .scbone .meta span {
+      display: inline-block;
+      min-width: 72px;
+      margin-left: 8px; }
+  /* line 105, scss/styles.scss */
+  .scbone .description {
+    line-height: 1.2; }
 
-/* line 84, scss/styles.scss */
+/* line 112, scss/styles.scss */
 .scbone .list ul,
 .scbone .list ol {
   list-style: none; }
 
-/* line 89, scss/styles.scss */
+/* line 117, scss/styles.scss */
 .scbone .description {
   line-height: 1.2; }
 
-/* line 93, scss/styles.scss */
+/* line 121, scss/styles.scss */
 .scbone .host {
   width: 208px;
   overflow: visible; }
-  /* line 100, scss/styles.scss */
+  /* line 128, scss/styles.scss */
   .scbone .host .picture,
   .scbone .host .info,
   .scbone .host .subresources,
@@ -1619,112 +1643,112 @@ body {
     background-color: #4d4d4d;
     display: block;
     position: relative; }
-  /* line 108, scss/styles.scss */
+  /* line 136, scss/styles.scss */
   .scbone .host .info,
   .scbone .host .subresources,
   .scbone .host .description {
     padding: 8px; }
-  /* line 112, scss/styles.scss */
+  /* line 140, scss/styles.scss */
   .scbone .host .block-h {
     overflow: hidden;
     width: 316px;
     height: 100px; }
-  /* line 119, scss/styles.scss */
+  /* line 147, scss/styles.scss */
   .scbone .host .picture,
   .scbone .host .info {
     float: left;
     height: 100px; }
-  /* line 125, scss/styles.scss */
+  /* line 153, scss/styles.scss */
   .scbone .host .block-h,
   .scbone .host .subresources {
     height: 100px;
     margin-bottom: 8px; }
-  /* line 130, scss/styles.scss */
+  /* line 158, scss/styles.scss */
   .scbone .host .picture {
     width: 100px;
     height: 100px;
     margin: 0 8px 8px 0; }
-  /* line 136, scss/styles.scss */
+  /* line 164, scss/styles.scss */
   .scbone .host .info {
     width: 208px; }
-  /* line 143, scss/styles.scss */
+  /* line 171, scss/styles.scss */
   .scbone .host .full-name,
   .scbone .host .city,
   .scbone .host .country {
     font-size: small; }
-  /* line 147, scss/styles.scss */
+  /* line 175, scss/styles.scss */
   .scbone .host .username {
     display: block;
     text-transform: uppercase;
     margin-bottom: 8px; }
-  /* line 152, scss/styles.scss */
+  /* line 180, scss/styles.scss */
   .scbone .host .full-name {
     display: block;
     margin-bottom: 8px; }
-  /* line 157, scss/styles.scss */
+  /* line 185, scss/styles.scss */
   .scbone .host .subresources {
     list-style: none;
     overflow: hidden;
     font-size: small; }
-  /* line 171, scss/styles.scss */
+  /* line 191, scss/styles.scss */
   .scbone .host .description {
     max-height: 316px;
     min-height: 46px; }
 
-/* line 177, scss/styles.scss */
+/* line 197, scss/styles.scss */
 .scbone .scope.user {
   position: absolute;
   top: 54px;
   width: 632px;
   left: 324px; }
-  /* line 183, scss/styles.scss */
+  /* line 203, scss/styles.scss */
   .scbone .scope.user .block-h {
     overflow: hidden;
     width: 100%;
     height: 100px;
     margin-bottom: 8px; }
-  /* line 192, scss/styles.scss */
+  /* line 212, scss/styles.scss */
   .scbone .scope.user .info,
   .scbone .scope.user .subresources,
   .scbone .scope.user .description {
     display: block;
     padding: 8px;
     background-color: #333333; }
-  /* line 199, scss/styles.scss */
+  /* line 219, scss/styles.scss */
   .scbone .scope.user .picture,
   .scbone .scope.user .info {
     display: inline;
     float: left; }
-  /* line 204, scss/styles.scss */
+  /* line 224, scss/styles.scss */
   .scbone .scope.user .picture {
     width: 100px;
     height: 100px;
     margin-right: 8px; }
-  /* line 210, scss/styles.scss */
+  /* line 230, scss/styles.scss */
   .scbone .scope.user .info {
     height: 100px;
     width: 524px; }
-  /* line 215, scss/styles.scss */
+  /* line 235, scss/styles.scss */
   .scbone .scope.user .username {
     display: block;
     margin-bottom: 8px;
     text-transform: uppercase; }
-  /* line 221, scss/styles.scss */
+  /* line 241, scss/styles.scss */
   .scbone .scope.user .subresources {
     height: 46px;
     text-align: center;
     margin: 0 0 8px 0;
     font-size: small; }
-    /* line 226, scss/styles.scss */
+    /* line 246, scss/styles.scss */
     .scbone .scope.user .subresources li {
       line-height: 30px;
       padding: 0 16px;
       display: inline-block; }
-  /* line 233, scss/styles.scss */
+  /* line 253, scss/styles.scss */
   .scbone .scope.user .description {
     min-height: 100px; }
 
-/* line 238, scss/styles.scss */
+/* line 258, scss/styles.scss */
 .scbone .player {
   position: absolute;
   top: 108px;
@@ -1732,7 +1756,7 @@ body {
   width: 740px;
   min-height: 208px;
   z-index: 99; }
-  /* line 248, scss/styles.scss */
+  /* line 268, scss/styles.scss */
   .scbone .player .progress,
   .scbone .player .controls,
   .scbone .player .logos {
@@ -1740,22 +1764,22 @@ body {
     background-color: black;
     position: absolute;
     left: 0; }
-  /* line 256, scss/styles.scss */
+  /* line 276, scss/styles.scss */
   .scbone .player .progress,
   .scbone .player canvas {
     height: 100px; }
-  /* line 260, scss/styles.scss */
+  /* line 280, scss/styles.scss */
   .scbone .player .progress {
     cursor: pointer;
     top: 54px; }
-  /* line 266, scss/styles.scss */
+  /* line 286, scss/styles.scss */
   .scbone .player .controls,
   .scbone .player .logos {
     height: 46px; }
-  /* line 270, scss/styles.scss */
+  /* line 290, scss/styles.scss */
   .scbone .player .controls {
     top: 0; }
-    /* line 272, scss/styles.scss */
+    /* line 292, scss/styles.scss */
     .scbone .player .controls button {
       position: relative;
       width: 50%;
@@ -1764,11 +1788,11 @@ body {
       background: none;
       color: #efd96a;
       border: none; }
-  /* line 283, scss/styles.scss */
+  /* line 303, scss/styles.scss */
   .scbone .player .logos {
     top: 162px;
     text-align: center; }
-  /* line 288, scss/styles.scss */
+  /* line 308, scss/styles.scss */
   .scbone .player .tracks {
     position: relative;
     left: 108px;
@@ -1777,58 +1801,49 @@ body {
     overflow: auto;
     background-color: #fff; }
 
-/* line 300, scss/styles.scss */
+/* line 320, scss/styles.scss */
 .scbone .tracks {
   position: absolute;
   top: 0;
   left: 324px;
   width: 632px; }
-  /* line 306, scss/styles.scss */
+  /* line 326, scss/styles.scss */
   .scbone .tracks li {
     background-color: black;
     margin-bottom: 8px;
     overflow: hidden;
     position: relative;
     height: 46px;
-    padding: 0 8px 0 46px;
+    padding: 0 8px;
     -webkit-transition: padding-right 0.3s, height 0.3s;
     -moz-transition: padding-right 0.3s, height 0.3s;
     -o-transition: padding-right 0.3s, height 0.3s;
     transition: padding-right 0.3s, height 0.3s; }
-    /* line 317, scss/styles.scss */
+    /* line 337, scss/styles.scss */
     .scbone .tracks li:last-child {
       margin-bottom: 0; }
-    /* line 321, scss/styles.scss */
+    /* line 341, scss/styles.scss */
     .scbone .tracks li:hover {
-      padding: 0 108px 0 46px;
+      padding: 0 108px 0 8px;
       height: 100px; }
-      /* line 324, scss/styles.scss */
+      /* line 344, scss/styles.scss */
       .scbone .tracks li:hover .artwork {
         height: 100px;
         opacity: 1; }
-    /* line 331, scss/styles.scss */
+      /* line 348, scss/styles.scss */
+      .scbone .tracks li:hover .title {
+        max-height: 2em; }
+    /* line 354, scss/styles.scss */
     .scbone .tracks li.no-artwork, .scbone .tracks li.current {
-      padding: 0 8px 0 46px; }
-    /* line 334, scss/styles.scss */
+      padding: 0 8px; }
+    /* line 357, scss/styles.scss */
     .scbone .tracks li.current {
       height: 100px;
       background-color: #333333; }
-      /* line 337, scss/styles.scss */
+      /* line 360, scss/styles.scss */
       .scbone .tracks li.current .artwork {
         display: none; }
-  /* line 343, scss/styles.scss */
-  .scbone .tracks .actions {
-    position: absolute;
-    top: 8px;
-    left: 8px; }
-    /* line 347, scss/styles.scss */
-    .scbone .tracks .actions i {
-      display: block;
-      text-align: center;
-      width: 30px;
-      height: 30px;
-      line-height: 30px; }
-  /* line 356, scss/styles.scss */
+  /* line 366, scss/styles.scss */
   .scbone .tracks .artwork {
     position: absolute;
     top: 0;
@@ -1839,29 +1854,61 @@ body {
     -moz-transition: opacity 0.3s, height 0.3s;
     -o-transition: opacity 0.3s, height 0.3s;
     transition: opacity 0.3s, height 0.3s; }
-  /* line 365, scss/styles.scss */
+  /* line 375, scss/styles.scss */
   .scbone .tracks .title {
+    font-size: 1em;
+    font-weight: 300;
+    position: relative;
     padding: 8px 0;
+    margin: 0;
     min-height: 46px;
     display: block; }
-  /* line 372, scss/styles.scss */
-  .scbone .tracks .duration,
-  .scbone .tracks .likes {
-    display: inline-block;
-    min-width: 46px;
-    font-size: small; }
+    /* line 385, scss/styles.scss */
+    .scbone .tracks .title .actions,
+    .scbone .tracks .title a {
+      display: block;
+      height: 28px;
+      line-height: 28px; }
+    /* line 391, scss/styles.scss */
+    .scbone .tracks .title .actions {
+      position: absolute;
+      width: 28px;
+      top: 8px;
+      left: 0; }
+    /* line 398, scss/styles.scss */
+    .scbone .tracks .title a {
+      text-transform: uppercase;
+      max-height: 28px;
+      margin-left: 28px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
+  /* line 409, scss/styles.scss */
+  .scbone .tracks .release,
+  .scbone .tracks .meta {
+    font-size: small;
+    margin-left: 28px; }
+  /* line 414, scss/styles.scss */
+  .scbone .tracks .meta {
+    margin-top: 4px; }
+    /* line 417, scss/styles.scss */
+    .scbone .tracks .meta span,
+    .scbone .tracks .meta a {
+      display: inline-block;
+      min-width: 40px;
+      margin: 0 4px 0 0; }
 
-/* line 392, scss/styles.scss */
+/* line 438, scss/styles.scss */
 .scbone.host-tracks .player, .scbone.host-users .player, .scbone.guest-tracks .player, .scbone.guest-users .player {
   width: 100px;
   max-height: 208px;
   overflow: hidden; }
-  /* line 396, scss/styles.scss */
+  /* line 442, scss/styles.scss */
   .scbone.host-tracks .player:hover, .scbone.host-users .player:hover, .scbone.guest-tracks .player:hover, .scbone.guest-users .player:hover {
     z-index: 99;
     max-height: 424px;
     width: 740px; }
-/* line 406, scss/styles.scss */
+/* line 452, scss/styles.scss */
 .scbone.player .scope.user,
 .scbone.player .scope.group, .scbone.tracks .scope.user,
 .scbone.tracks .scope.group {
