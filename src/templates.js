@@ -17,6 +17,9 @@
 }(function(_) {
   'use strict';
 
+  // I perfectly know that I should pre-compile the templates at build... 
+  // will do :)
+
   var templates = {};
   templates['SCBone/profile'] = _.template([
     '',
@@ -214,10 +217,6 @@
 
       '<div class="track-info <%- sharing %>">',
         '<div class="title">',
-          '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
-        '</div>',
-
-        '<div class="meta">',
           '<span class="playlist actions">',
           '<% if (removeable) { %>',
             '<i class="icon-minus" data-action="remove" data-id="<%- id %>"></i>',
@@ -225,7 +224,24 @@
             '<i class="icon-plus" data-action="add" data-id="<%- id %>"></i>',
           '<% } %>',
           '</span>',
-          
+          '<a href="<%- prefix %>tracks/<%- id %>"><%- title %></a>',
+        '</div>',
+
+        '<div class="release">',
+          '<a class="user" href="<%- prefix %>users/<%- user.permalink %>" class="username">',
+            '<i class="icon-user"></i>',
+            '<%- user.username %>',
+          '</a>',
+
+          '<% if (typeof label !== "undefined" && label.permalink !== user.permalink) { %>',
+          '<a class="label" href="<%- prefix %>users/<%- label.permalink %>" class="username">',
+            '<i class="icon-user"></i>',
+            '<%- label.username %>',
+          '</a>',
+          '<% } %>',
+        '</div>',
+
+        '<div class="meta">',
           '<span class="duration">',
             '<i class="icon-clock"></i>',
             '<%- moment(duration).format("m:s") %>',
@@ -251,6 +267,16 @@
             '<%- comment_count %>',
           '</span>',
           '<% } %>',
+          
+          '<span class="likes"',
+          '<% if(isConnected) {%>',
+          ' data-action="like" data-id="<%- id %>"',
+          '<% } %>',
+          '<%= (isConnected && user_liked ? " title=\\"You liked it.\\"" : "") %>',
+          '>',
+            '<i class="icon-heart<%- (user_liked ? "" : "-empty") %>"></i>',
+            '<%- likes %>',
+          '</span>',
 
           '<% if (downloadable) { %>',
             '<a href="<%- download_url %>" class="download-count">',
@@ -263,27 +289,6 @@
               '<%- downloaded %>',
             '</span>',
           '<% } %>',
-          
-          '<span class="likes" data-action="like" data-id="<%- id %>"',
-          '<%= (user_liked ? " title=\\"You liked it.\\"" : "") %>',
-          '>',
-            '<i class="icon-heart<%- (user_liked ? "" : "-empty") %>"></i>',
-            '<%- likes %>',
-          '</span>',
-
-          '<div class="release">',
-            '<a class="user" href="<%- prefix %>users/<%- user.permalink %>" class="username">',
-              '<i class="icon-user"></i>',
-              '<%- user.username %>',
-            '</a>',
-
-            '<% if (typeof label !== "undefined") { %>',
-            '<a class="label" href="<%- prefix %>users/<%- label.permalink %>" class="username">',
-              '<i class="icon-user"></i>',
-              '<%- label.username %>',
-            '</a>',
-            '<% } %>',
-          '</div>',
         '</div>',
           
       '</div>',
