@@ -21,7 +21,7 @@
     "/expect.js":           "node_modules/expect.js/expect.js",
     "/moment.js":           "bower_components/moment/moment.js",
 
-    "/tests.js":            "test/tests.js",
+    "/tests.js":            "test/testem-tests.js",
     "/spec":                "test/spec"
   }
 }
